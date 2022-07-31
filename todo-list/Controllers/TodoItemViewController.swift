@@ -83,8 +83,6 @@ final class TodoItemViewController: UIViewController {
             fileCache.removeTodoItem(id: fileCache.todoItems.first!.id)
         }
         
-   
-        
         calendarTableView.reloadData()
     }
     
@@ -96,11 +94,6 @@ final class TodoItemViewController: UIViewController {
         } catch {
             
         }
-//        do {
-//            try fileCache.deleteFile(fileName: filename)
-//        } catch {
-//
-//        }
         do {
             try fileCache.saveFile(fileName: filename)
         } catch {
@@ -209,7 +202,6 @@ extension TodoItemViewController: UITableViewDelegate {
         
         if let cellType = CalendarCellType(rawValue: indexPath.row) {
             switch cellType {
-            
             case .priority:
                 return 60
             case .deadline:
