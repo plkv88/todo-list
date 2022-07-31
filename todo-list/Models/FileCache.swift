@@ -25,43 +25,41 @@ enum FileCacheErrors: LocalizedError {
 final class FileCache {
     private (set) var todoItems: [TodoItem] = []
     
-    func addTodoItem(id: String = UUID().uuidString, text: String, priority: Priority, deadline: Date? = nil) throws {
-        if todoItems.contains(where: { $0.id == id }) {
-            throw FileCacheErrors.alreadyExisting(id: id)
-        } else {
-            todoItems.append(TodoItem.init(id: id, text: text, done: false, priority: priority, deadline: deadline, dateCreate: Date.now, dateEdit: nil))
+    func addTodoItem(todoItem: TodoItem) throws {
+        guard !todoItems.contains(where: { $0.id == todoItem.id }) else {
+            throw FileCacheErrors.alreadyExisting(id: todoItem.id)
         }
+        todoItems.append(todoItem)
     }
     
     func removeTodoItem(id: String) {
         todoItems.removeAll(where: { $0.id == id })
     }
     
+    func getFileURL(by name: String) -> URL? {
+        return FileManager.default
+            .urls(for: .documentDirectory, in: .userDomainMask)
+            .first?
+            .appendingPathComponent(name, isDirectory: false)
+    }
+    
     func saveFile(fileName: String) throws {
-        var itemsArray: [Any] = []
-        for item in todoItems {
-            itemsArray.append(item.json)
-        }
+        let itemsDictArray = todoItems.map { $0.json }
         
-        if let fileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent(fileName, isDirectory: false) {
-            try JSONSerialization.data(withJSONObject: itemsArray, options: []).write(to: fileURL)
+        if let fileURL = getFileURL(by: fileName) {
+            try JSONSerialization.data(withJSONObject: itemsDictArray, options: []).write(to: fileURL)
         }
     }
     
     func loadFile(fileName: String) throws {
-        if let fileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent(fileName, isDirectory: false) {
+        if let fileURL = getFileURL(by: fileName) {
             let fileData = try Data(contentsOf: fileURL)
             let itemsArray = try JSONSerialization.jsonObject(with: fileData, options: [])
             
             guard let itemsArray = itemsArray as? [Any] else { throw FileCacheErrors.invalidJSONFormat }
             
             todoItems.removeAll()
-            
-            for item in itemsArray {
-                if let newItem = TodoItem.parse(json: item) {
-                    todoItems.append(newItem)
-                }
-            }
+            todoItems = itemsArray.compactMap { TodoItem.parse(json: $0) }
         }
     }
 }

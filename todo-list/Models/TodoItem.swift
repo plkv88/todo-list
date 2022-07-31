@@ -21,6 +21,19 @@ struct TodoItem {
     let deadline: Date?
     let dateCreate: Date
     let dateEdit: Date?
+    
+    init(id: String = UUID().uuidString,
+         text: String, done: Bool = false,
+         priority: Priority, deadline: Date? = nil,
+         dataCreate: Date = Date.now, dataEdit: Date? = nil) {
+        self.id = id
+        self.text = text
+        self.done = done
+        self.priority = priority
+        self.deadline = deadline
+        self.dateCreate = dataCreate
+        self.dateEdit = dataEdit
+    }
 }
 
 extension TodoItem {
@@ -45,17 +58,28 @@ extension TodoItem {
             let done = dict["done"] as? Bool ?? false
             
             var priority = Priority.normal
-            if let priorityString = dict["priority"] as? String { priority = Priority(rawValue: priorityString) ?? .normal }
+            if let priorityString = dict["priority"] as? String {
+                priority = Priority(rawValue: priorityString) ?? .normal
+            }
             
             var deadline: Date?
-            if let deadlineDouble = dict["deadline"] as? Double { deadline = Date(timeIntervalSince1970: deadlineDouble) }
+            if let deadlineDouble = dict["deadline"] as? Double {
+                deadline = Date(timeIntervalSince1970: deadlineDouble)
+            }
             
             let dateCreate = Date(timeIntervalSince1970: dict["dateCreate"] as? Double ?? 0)
             
             var dateEdit: Date?
-            if let dateEditDouble = dict["dateEdit"] as? Double { dateEdit = Date(timeIntervalSince1970: dateEditDouble) }
+            if let dateEditDouble = dict["dateEdit"] as? Double {
+                dateEdit = Date(timeIntervalSince1970: dateEditDouble)
+            }
             
-            return self.init(id: id, text: text, done: done, priority: priority, deadline: deadline, dateCreate: dateCreate, dateEdit: dateEdit)
+            return self.init(id: id,
+                             text: text, done: done,
+                             priority: priority,
+                             deadline: deadline,
+                             dataCreate: dateCreate,
+                             dataEdit: dateEdit)
         } else {
             return nil
         }
