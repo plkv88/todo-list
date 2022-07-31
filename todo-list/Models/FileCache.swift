@@ -11,13 +11,16 @@ import Foundation
 enum FileCacheErrors: LocalizedError {
     case alreadyExisting(id: String)
     case invalidJSONFormat
+    case fileAccess
     
     var errorDescription: String? {
         switch self {
         case .alreadyExisting(let id):
             return "Задача c id \"\(id)\" уже существует"
         case .invalidJSONFormat:
-            return "Неправильный формат JSON"
+            return "Неверный формат JSON"
+        case .fileAccess:
+            return "Проблема доступа в документы приложения"
         }
     }
 }
@@ -46,20 +49,18 @@ final class FileCache {
     func saveFile(fileName: String) throws {
         let itemsDictArray = todoItems.map { $0.json }
         
-        if let fileURL = getFileURL(by: fileName) {
-            try JSONSerialization.data(withJSONObject: itemsDictArray, options: []).write(to: fileURL)
-        }
+        guard let fileURL = getFileURL(by: fileName) else { throw FileCacheErrors.fileAccess }
+        try JSONSerialization.data(withJSONObject: itemsDictArray, options: []).write(to: fileURL)
     }
     
     func loadFile(fileName: String) throws {
-        if let fileURL = getFileURL(by: fileName) {
-            let fileData = try Data(contentsOf: fileURL)
-            let itemsArray = try JSONSerialization.jsonObject(with: fileData, options: [])
-            
-            guard let itemsArray = itemsArray as? [Any] else { throw FileCacheErrors.invalidJSONFormat }
-            
-            todoItems.removeAll()
-            todoItems = itemsArray.compactMap { TodoItem.parse(json: $0) }
-        }
+        guard let fileURL = getFileURL(by: fileName) else { throw FileCacheErrors.fileAccess }
+        let fileData = try Data(contentsOf: fileURL)
+        let itemsArray = try JSONSerialization.jsonObject(with: fileData, options: [])
+        
+        guard let itemsArray = itemsArray as? [Any] else { throw FileCacheErrors.invalidJSONFormat }
+        
+        todoItems.removeAll()
+        todoItems = itemsArray.compactMap { TodoItem.parse(json: $0) }
     }
 }
