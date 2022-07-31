@@ -63,4 +63,9 @@ final class FileCache {
         todoItems.removeAll()
         todoItems = itemsArray.compactMap { TodoItem.parse(json: $0) }
     }
+    
+    func deleteFile(fileName: String) throws {
+        guard let fileURL = getFileURL(by: fileName) else { throw FileCacheErrors.fileAccess }
+        try FileManager.default.removeItem(atPath: fileURL.path)
+    }
 }
