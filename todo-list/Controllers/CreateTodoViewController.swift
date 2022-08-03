@@ -22,6 +22,8 @@ final class CreateTodoItemViewController: UIViewController {
     private var fileCache = FileCache()
     private let filename = "todo.json"
     
+    private var keyboardHeight: CGFloat?
+    
     // MARK: - Layout
     
     enum Layout {
@@ -39,8 +41,12 @@ final class CreateTodoItemViewController: UIViewController {
             static let saveButtonTextKey = "Сохранить"
         }
         
-        enum BigStackView {
+        enum ScrollView {
             static let insets = UIEdgeInsets(top: 16, left: 16, bottom: 0, right: -16)
+        }
+        
+        enum BigStackView {
+            
             static let minimumLineSpacing: CGFloat = 15
         }
         
@@ -68,27 +74,13 @@ final class CreateTodoItemViewController: UIViewController {
     
     // MARK: - Subviews
     
-    private var contentSize: CGSize {
-        CGSize(width: view.frame.width, height: view.frame.height)
-    }
-    
     private lazy var scrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        scrollView.backgroundColor = Layout.backgroundcolor
-        scrollView.frame = view.bounds
-        scrollView.alwaysBounceVertical = true
-        scrollView.contentSize = contentSize
+         let view = UIScrollView()
+         view.showsVerticalScrollIndicator = false
+         view.translatesAutoresizingMaskIntoConstraints = false
+         return view
+     }()
         
-        return scrollView
-    }()
-    
-    private lazy var contentView: UIView = {
-        let contentView = UIView()
-        contentView.backgroundColor = Layout.backgroundcolor
-        contentView.frame.size = contentSize
-        return contentView
-    }()
-    
     private lazy var topStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
@@ -138,6 +130,7 @@ final class CreateTodoItemViewController: UIViewController {
     private lazy var taskTextView: TextViewWithPlaceholder = {
         let textView = TextViewWithPlaceholder()
         textView.translatesAutoresizingMaskIntoConstraints = false
+        textView.isScrollEnabled = false
         textView.customDelegate = self
         return textView
     }()
@@ -202,10 +195,17 @@ final class CreateTodoItemViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        addScrollViewGesture()
+        
         view.backgroundColor = Layout.backgroundcolor
         
         addSubviews()
         addConstraints()
+        addObservers()
+    }
+    
+    deinit {
+        removeObservers()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -228,6 +228,20 @@ final class CreateTodoItemViewController: UIViewController {
     
     // MARK: - UI
     
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+         view.endEditing(true)
+     }
+
+     private func addScrollViewGesture() {
+         scrollView.isUserInteractionEnabled = true
+         let gesture = UITapGestureRecognizer(target: self, action: #selector(scrollViewTapped))
+         scrollView.addGestureRecognizer(gesture)
+     }
+
+     @objc private func scrollViewTapped() {
+         view.endEditing(true)
+     }
+    
     @objc private func datePickerTapped(sender: UIDatePicker) {
         datePickerTapped(for: sender.date)
     }
@@ -243,42 +257,44 @@ final class CreateTodoItemViewController: UIViewController {
     }
     
     private func addSubviews() {
-        
-        view.addSubview(scrollView)
-        scrollView.addSubview(contentView)
-        
-        contentView.addSubview(topStackView)
-        topStackView.addArrangedSubview(cancelButton)
-        topStackView.addArrangedSubview(nameScreenLabel)
-        topStackView.addArrangedSubview(saveButton)
-        
-        contentView.addSubview(bigStackView)
-        bigStackView.addArrangedSubview(taskTextView)
-        
-        bigStackView.addArrangedSubview(containerForSmallStackView)
-        containerForSmallStackView.addSubview(smallStackView)
-        smallStackView.addArrangedSubview(priorityView)
-        smallStackView.addArrangedSubview(deadLineView)
-        smallStackView.addArrangedSubview(calendarDatePicker)
-        
-        bigStackView.addArrangedSubview(deleteButton)
+        view.addSubview(topStackView)
+          topStackView.addArrangedSubview(cancelButton)
+          topStackView.addArrangedSubview(nameScreenLabel)
+          topStackView.addArrangedSubview(saveButton)
+
+          view.addSubview(scrollView)
+          scrollView.addSubview(bigStackView)
+
+          bigStackView.addArrangedSubview(taskTextView)
+          bigStackView.addArrangedSubview(containerForSmallStackView)
+
+          containerForSmallStackView.addSubview(smallStackView)
+          smallStackView.addArrangedSubview(priorityView)
+          smallStackView.addArrangedSubview(deadLineView)
+          smallStackView.addArrangedSubview(calendarDatePicker)
+
+          bigStackView.addArrangedSubview(deleteButton)
     }
     
     private func addConstraints() {
         NSLayoutConstraint.activate([
-            
-            
-            
-            topStackView.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor),
+            topStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             topStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Layout.TopStackView.insets.left),
             topStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: Layout.TopStackView.insets.right),
             topStackView.heightAnchor.constraint(equalToConstant: Layout.TopStackView.height),
             
-            bigStackView.topAnchor.constraint(equalTo: topStackView.bottomAnchor, constant: Layout.BigStackView.insets.top),
-            bigStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Layout.BigStackView.insets.left),
-            bigStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: Layout.BigStackView.insets.right),
+            scrollView.topAnchor.constraint(equalTo: topStackView.bottomAnchor, constant: Layout.ScrollView.insets.top),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Layout.ScrollView.insets.left),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: Layout.ScrollView.insets.right),
+            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
-            taskTextView.heightAnchor.constraint(equalToConstant: Layout.TextView.height),
+            bigStackView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            bigStackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            bigStackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            bigStackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            bigStackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            
+            taskTextView.heightAnchor.constraint(greaterThanOrEqualToConstant: Layout.TextView.height),
             priorityView.heightAnchor.constraint(equalToConstant: Layout.PriorityView.height),
             deadLineView.heightAnchor.constraint(equalToConstant: Layout.DeadLineView.height),
             
@@ -333,6 +349,27 @@ final class CreateTodoItemViewController: UIViewController {
         priorityView.setPriority(priority: todoItemViewModel.priority ?? Priority.normal)
         calendarDatePicker.isHidden = true
     }
+    
+    private func addObservers() {
+         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+     }
+
+     private func removeObservers() {
+         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardDidShowNotification, object: nil)
+         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+     }
+
+     @objc private func keyboardWillShow(notification: NSNotification) {
+         guard let userInfo = notification.userInfo else { return }
+         guard let keyboardSize = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+         let keyboardHeight = keyboardSize.cgRectValue.height
+         scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardHeight, right: 0)
+     }
+
+     @objc private func keyboardWillHide(notification: NSNotification) {
+         scrollView.contentInset = .zero
+     }
 }
 
 // MARK: - DeadLineViewDelegate

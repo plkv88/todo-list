@@ -20,7 +20,7 @@ final class TextViewWithPlaceholder: UITextView {
         enum TextView {
             static let insets = UIEdgeInsets(top: 0, left: 16, bottom: -16, right: -16)
             static let height: CGFloat = 78
-            static let textContainerInset = UIEdgeInsets(top: 13, left: 15, bottom: 0, right: 5)
+            static let textContainerInset = UIEdgeInsets(top: 15, left: 15, bottom: 15, right: 15)
             static let cornerRadius: CGFloat = 16
             static let textSize: CGFloat = 15
             static let textColor = UIColor(red: 200, green: 200, blue: 200, alpha: 1)
