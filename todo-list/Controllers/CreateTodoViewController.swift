@@ -195,8 +195,6 @@ final class CreateTodoItemViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        addScrollViewGesture()
-        
         view.backgroundColor = Layout.backgroundcolor
         
         addSubviews()
@@ -229,16 +227,6 @@ final class CreateTodoItemViewController: UIViewController {
     // MARK: - UI
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-         view.endEditing(true)
-     }
-
-     private func addScrollViewGesture() {
-         scrollView.isUserInteractionEnabled = true
-         let gesture = UITapGestureRecognizer(target: self, action: #selector(scrollViewTapped))
-         scrollView.addGestureRecognizer(gesture)
-     }
-
-     @objc private func scrollViewTapped() {
          view.endEditing(true)
      }
     
@@ -379,12 +367,18 @@ extension CreateTodoItemViewController: DeadLineViewDelegate {
             if todoItemViewModel.deadline == nil {
                 todoItemViewModel.deadline = Date.now + 60 * 60 * 24
             }
-            calendarDatePicker.isHidden = false
+            
+            UIView.animate(withDuration: Double(0.3), animations: {
+                self.calendarDatePicker.isHidden = false
+            })
+            
             calendarDatePicker.setDate(todoItemViewModel.deadline!, animated: false)
             deadLineView.makeLayoutForSwitcherIsON(for: todoItemViewModel.deadline!)
         } else {
             todoItemViewModel.deadline = nil
-            calendarDatePicker.isHidden = true
+            UIView.animate(withDuration: Double(0.3), animations: {
+                self.calendarDatePicker.isHidden = true
+            })
             deadLineView.makeLayoutForSwitcherIsOff()
         }
     }
