@@ -40,16 +40,16 @@ final class CreateTodoItemViewController: UIViewController {
         }
         
         enum BigStackView {
-            static let insets = UIEdgeInsets(top: 20, left: 16, bottom: 0, right: -16)
+            static let insets = UIEdgeInsets(top: 16, left: 16, bottom: 0, right: -16)
             static let minimumLineSpacing: CGFloat = 15
         }
         
         enum PriorityView {
-            static let height: CGFloat = 65
+            static let height: CGFloat = 60
         }
         
         enum DeadLineView {
-            static let height: CGFloat = 65
+            static let height: CGFloat = 60
         }
         
         enum TextView {
@@ -74,8 +74,9 @@ final class CreateTodoItemViewController: UIViewController {
     
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
-        scrollView.backgroundColor = .white
+        scrollView.backgroundColor = Layout.backgroundcolor
         scrollView.frame = view.bounds
+        scrollView.alwaysBounceVertical = true
         scrollView.contentSize = contentSize
         
         return scrollView
@@ -85,7 +86,6 @@ final class CreateTodoItemViewController: UIViewController {
         let contentView = UIView()
         contentView.backgroundColor = Layout.backgroundcolor
         contentView.frame.size = contentSize
-        
         return contentView
     }()
     
@@ -243,12 +243,16 @@ final class CreateTodoItemViewController: UIViewController {
     }
     
     private func addSubviews() {
-        view.addSubview(topStackView)
+        
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        
+        contentView.addSubview(topStackView)
         topStackView.addArrangedSubview(cancelButton)
         topStackView.addArrangedSubview(nameScreenLabel)
         topStackView.addArrangedSubview(saveButton)
         
-        view.addSubview(bigStackView)
+        contentView.addSubview(bigStackView)
         bigStackView.addArrangedSubview(taskTextView)
         
         bigStackView.addArrangedSubview(containerForSmallStackView)
@@ -263,7 +267,9 @@ final class CreateTodoItemViewController: UIViewController {
     private func addConstraints() {
         NSLayoutConstraint.activate([
             
-            topStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            
+            
+            topStackView.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor),
             topStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Layout.TopStackView.insets.left),
             topStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: Layout.TopStackView.insets.right),
             topStackView.heightAnchor.constraint(equalToConstant: Layout.TopStackView.height),

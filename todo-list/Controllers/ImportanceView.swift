@@ -25,9 +25,6 @@ final class PriorityView: UIView {
         
         enum SegmentControl {
             static let insets = UIEdgeInsets(top: 13, left: 0, bottom: -13, right: -16)
-            static let arrow = "↓"
-            static let noText = "нет"
-            static let exclamationMark = "‼"
         }
         
         enum LineView {
@@ -46,13 +43,12 @@ final class PriorityView: UIView {
     }()
     
     private lazy var segmentControl: UISegmentedControl = {
-        let segmentControl = UISegmentedControl(
-            items: [
-                Layout.SegmentControl.arrow,
-                Layout.SegmentControl.noText,
-                Layout.SegmentControl.exclamationMark
-            ]
-        )
+        let segmentControl = UISegmentedControl(items: ["low", "normal", "high"])
+        
+        segmentControl.setImage(UIImage(named: "low")!.withRenderingMode(.alwaysOriginal), forSegmentAt: 0)
+        segmentControl.setTitle("нет", forSegmentAt: 1)
+        segmentControl.setImage(UIImage(named: "high")!.withRenderingMode(.alwaysOriginal), forSegmentAt: 2)
+        
         segmentControl.addTarget(self, action: #selector(segmentControlTapped(sender:)), for: .valueChanged)
         segmentControl.translatesAutoresizingMaskIntoConstraints = false
         return segmentControl

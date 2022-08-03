@@ -147,13 +147,13 @@ final class DeadLineView: UIView {
     }
     
     func makeLayoutForSwitcherIsON(for date: Date) {
-        lineView.isHidden = true
+        lineView.isHidden = false
         belowLabel.isHidden = false
         dateChosen(date)
     }
     
     func makeLayoutForSwitcherIsOff() {
-        lineView.isHidden = false
+        lineView.isHidden = true
         belowLabel.isHidden = true
         belowLabel.setTitle(nil, for: .normal)
     }
