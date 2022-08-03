@@ -9,26 +9,46 @@ import UIKit
 
 final class TodoItemViewController: UIViewController {
     
-    let fileCache = FileCache()
-    let filename = "todo.json"
+    private let fileCache = FileCache()
+    private let filename = "todo.json"
     
-    var priority: Priority = .normal {
-        didSet {
-            calendarTableView.reloadData()
-        }
+    private var priority: Priority = .normal {
+        didSet { mainTableView.reloadData() }
     }
     
-    var deadline: Date? {
-        didSet {
-            calendarTableView.reloadData()
-        }
+    private var deadline: Date? {
+        didSet { mainTableView.reloadData() }
     }
+    
+    private var contentSize: CGSize {
+        CGSize(width: view.frame.width, height: view.frame.height)
+    }
+    
+    private lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.backgroundColor = .white
+        scrollView.frame = view.bounds
+        scrollView.contentSize = contentSize
+        
+        return scrollView
+    }()
+    
+    private lazy var contentView: UIView = {
+        let contentView = UIView()
+        contentView.backgroundColor = UIColor(red: 0.97, green: 0.97, blue: 0.95, alpha: 1.0)
+        contentView.frame.size = contentSize
+        
+        return contentView
+    }()
     
     private lazy var todoItemTextView: UITextView = {
         let textView = UITextView()
         textView.backgroundColor = .white
-        textView.layer.cornerRadius = 20
+        textView.layer.cornerRadius = 16
         textView.translatesAutoresizingMaskIntoConstraints = false
+        textView.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        textView.autocorrectionType = .no
+        textView.autocapitalizationType = .none
         return textView
     }()
     
@@ -38,28 +58,31 @@ final class TodoItemViewController: UIViewController {
         button.setTitle("Удалить", for: .normal)
         button.setTitleColor(.red, for: .normal)
         button.backgroundColor = .white
-        button.layer.cornerRadius = 20
+        button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(deleteTodo), for: .touchUpInside)
         
         return button
     }()
     
-    private lazy var calendarTableView: UITableView = {
-        let tableView = UITableView()
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.layer.cornerRadius = 20
-        tableView.backgroundColor = .white
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.register(PriorityCell.self, forCellReuseIdentifier: PriorityCell.reuseId)
-        tableView.register(DeadlineCell.self, forCellReuseIdentifier: DeadlineCell.reuseId)
-        tableView.register(CalendarCell.self, forCellReuseIdentifier: CalendarCell.reuseId)
-        return tableView
+    private lazy var mainTableView: UITableView = {
+        let mainTableView = UITableView()
+        mainTableView.translatesAutoresizingMaskIntoConstraints = false
+        mainTableView.layer.cornerRadius = 16
+        mainTableView.backgroundColor = .white
+        mainTableView.separatorStyle = .singleLine
+        mainTableView.dataSource = self
+        mainTableView.delegate = self
+
+        mainTableView.register(PriorityCell.self, forCellReuseIdentifier: PriorityCell.reuseId)
+        mainTableView.register(DeadlineCell.self, forCellReuseIdentifier: DeadlineCell.reuseId)
+        mainTableView.register(CalendarCell.self, forCellReuseIdentifier: CalendarCell.reuseId)
+        return mainTableView
     }()
     
-
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        view.backgroundColor = .blue
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Отменить", style: .done, target: self, action: #selector(cancelled))
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Сохранить", style: .done, target: self, action: #selector(saveTodo))
@@ -68,7 +91,7 @@ final class TodoItemViewController: UIViewController {
         setupViews()
         setupConstraints()
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         do {
             try fileCache.loadFile(fileName: filename)
@@ -76,18 +99,47 @@ final class TodoItemViewController: UIViewController {
             
         }
         
-        if fileCache.todoItems.count != 0 {
-            todoItemTextView.text = fileCache.todoItems.first?.text
-            priority = fileCache.todoItems.first?.priority ?? .normal
-            deadline = fileCache.todoItems.first?.deadline
-            fileCache.removeTodoItem(id: fileCache.todoItems.first!.id)
+        if let currentTodo = fileCache.todoItems.first {
+            todoItemTextView.text = currentTodo.text
+            priority = currentTodo.priority
+            deadline = currentTodo.deadline
+            fileCache.removeTodoItem(id: currentTodo.id)
         }
-        
-        calendarTableView.reloadData()
     }
     
-    @objc private func saveTodo() {
+    private func setupViews() {
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        contentView.addSubview(todoItemTextView)
+        contentView.addSubview(mainTableView)
+        contentView.addSubview(deleteButton)
+    }
+    
+    private func setupConstraints() {
+        NSLayoutConstraint.activate([
+            todoItemTextView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
+            todoItemTextView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
+            todoItemTextView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16),
+            todoItemTextView.heightAnchor.constraint(equalToConstant: 120)
+        ])
         
+        NSLayoutConstraint.activate([
+            mainTableView.topAnchor.constraint(equalTo: todoItemTextView.bottomAnchor, constant: 16),
+            mainTableView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
+            mainTableView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16),
+            mainTableView.heightAnchor.constraint(equalToConstant: 400)
+         ])
+        
+        NSLayoutConstraint.activate([
+            deleteButton.topAnchor.constraint(equalTo: mainTableView.bottomAnchor, constant: 16),
+            deleteButton.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
+            deleteButton.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16),
+            deleteButton.heightAnchor.constraint(equalToConstant: 56)
+        ])
+    }
+    
+    @objc
+    private func saveTodo() {
         let currentTodo = TodoItem(text: todoItemTextView.text, priority: priority, deadline: deadline)
         do {
             try fileCache.addTodoItem(todoItem: currentTodo)
@@ -99,19 +151,16 @@ final class TodoItemViewController: UIViewController {
         } catch {
             
         }
-        
         fileCache.removeTodoItem(id: currentTodo.id)
-        print(fileCache.todoItems)
     }
     
     @objc
-    func deleteTodo() {
-        
+    private func deleteTodo() {
         todoItemTextView.text = ""
         deadline = nil
         priority = .normal
         
-        calendarTableView.reloadData()
+        mainTableView.reloadData()
         
         do {
             try fileCache.deleteFile(fileName: filename)
@@ -120,46 +169,13 @@ final class TodoItemViewController: UIViewController {
         }
     }
     
-    @objc private func cancelled() {
+    @objc
+    private func cancelled() {
         dismiss(animated: true)
     }
     
-    private func setupViews() {
-        view.backgroundColor = UIColor(red: 0.97, green: 0.97, blue: 0.95, alpha: 1.0)
-
-        view.addSubview(todoItemTextView)
-        view.addSubview(calendarTableView)
-        view.addSubview(deleteButton)
-    }
-    
-    private func setupConstraints() {
-        
-        
-        NSLayoutConstraint.activate([
-            todoItemTextView.topAnchor.constraint(equalTo: view.topAnchor, constant: 50),
-            todoItemTextView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
-            todoItemTextView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
-            todoItemTextView.heightAnchor.constraint(equalToConstant: 120)
-        ])
-        
-        NSLayoutConstraint.activate([
-            calendarTableView.topAnchor.constraint(equalTo: todoItemTextView.bottomAnchor, constant: 20),
-            calendarTableView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
-            calendarTableView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
-            calendarTableView.heightAnchor.constraint(equalToConstant: 400)
-        ])
-        
-        NSLayoutConstraint.activate([
-            deleteButton.topAnchor.constraint(equalTo: calendarTableView.bottomAnchor, constant: 16),
-            deleteButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
-            deleteButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
-            deleteButton.heightAnchor.constraint(equalToConstant: 60)
-        ])
-        
-    }
-    
     @objc
-    func segmentControl(_ segmentedControl: UISegmentedControl) {
+    private func segmentControl(_ segmentedControl: UISegmentedControl) {
         switch (segmentedControl.selectedSegmentIndex) {
         case 0:
             priority = .low
@@ -175,17 +191,18 @@ final class TodoItemViewController: UIViewController {
         }
     }
     
-    @objc func switchStateDidChange(_ sender:UISwitch!) {
-        if (sender.isOn == true){
+    @objc
+    private func switchStateDidChange(_ sender:UISwitch!) {
+        if (sender.isOn == true) {
             deadline = Date.now.addingTimeInterval(60 * 60 * 24)
         }
-        else{
+        else {
             deadline = nil
         }
     }
     
     @objc
-    func calendarControl(_ calendarControl: UIDatePicker) {
+    private func calendarControl(_ calendarControl: UIDatePicker) {
         deadline = calendarControl.date
     }
 }
@@ -246,15 +263,17 @@ extension TodoItemViewController: UITableViewDataSource {
             } else {
                 cell.deadlinePicker.isOn = true
             }
-            
             return cell
+            
         case .calendar:
             let cell = tableView.dequeueReusableCell(withIdentifier: CalendarCell.reuseId, for: indexPath) as! CalendarCell
             cell.calendarPicker.addTarget(self, action: #selector(calendarControl(_:)), for: .valueChanged)
+
             if deadline != nil {
                 cell.calendarPicker.date = deadline!
             }
             return cell
+            
         default:
             return UITableViewCell()
         }

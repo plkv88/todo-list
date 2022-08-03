@@ -35,16 +35,16 @@ final class CalendarCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setupViews() {
+    private func setupViews() {
         contentView.addSubview(calendar)
     }
     
-    func setupConstrains() {
+    private func setupConstrains() {
         NSLayoutConstraint.activate([
-            calendar.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
-            calendar.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
-            calendar.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: 16),
-            calendar.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
+            calendar.topAnchor.constraint(equalTo: contentView.topAnchor),
+            calendar.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            calendar.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            calendar.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         ])
     }
 }

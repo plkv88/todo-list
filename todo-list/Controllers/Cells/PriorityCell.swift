@@ -19,12 +19,10 @@ final class PriorityCell: UITableViewCell {
         let label = UILabel()
         label.text = "Важность"
         label.translatesAutoresizingMaskIntoConstraints = false
-        
         return label
     }()
     
     private lazy var segmentControl: UISegmentedControl = {
-        
         let segmentItems = ["Low", "Normal", "High"]
         let segmentControl = UISegmentedControl(items: segmentItems)
         segmentControl.translatesAutoresizingMaskIntoConstraints = false
@@ -34,9 +32,7 @@ final class PriorityCell: UITableViewCell {
         segmentControl.setImage(UIImage(named: "high")!.withRenderingMode(.alwaysOriginal), forSegmentAt: 2)
         return segmentControl
     }()
-
     
-    //MARK: - Lifecycle
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -48,24 +44,22 @@ final class PriorityCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setupViews() {
+    private func setupViews() {
         contentView.addSubview(nameLabel)
         contentView.addSubview(segmentControl)
     }
     
-    func setupConstrains() {
+    private func setupConstrains() {
         
         NSLayoutConstraint.activate([
             nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
             nameLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
-            //nameLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: 16),
             nameLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
             nameLabel.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width / 2 - 16)
         ])
         
         NSLayoutConstraint.activate([
             segmentControl.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
-            //segmentControl.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
             segmentControl.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16),
             segmentControl.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
             segmentControl.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width / 2 - 16)

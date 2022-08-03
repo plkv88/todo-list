@@ -26,8 +26,6 @@ final class DeadlineCell: UITableViewCell {
     private lazy var deadlineSwitch: UISwitch = {
         var dswitch = UISwitch()
         dswitch.translatesAutoresizingMaskIntoConstraints = false
-       // deadlineSwitch.addTarget(self, action: #selector(self.switchStateDidChange(_:)), for: .valueChanged)
-        dswitch.setOn(false, animated: false)
         return dswitch
     }()
     
@@ -42,28 +40,22 @@ final class DeadlineCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setupViews() {
+    private func setupViews() {
         contentView.addSubview(nameLabel)
-        //contentView.addSubview(calendar)
         contentView.addSubview(deadlineSwitch)
     }
     
-    func setupConstrains() {
-        
+    private func setupConstrains() {
+
         NSLayoutConstraint.activate([
-            nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
+            nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: contentView.frame.height / 2),
             nameLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
-            //nameLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: 16),
-            nameLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
-            //nameLabel.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width / 2 - 16)
         ])
         
         NSLayoutConstraint.activate([
             deadlineSwitch.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
-            //segmentControl.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
             deadlineSwitch.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16),
             deadlineSwitch.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
-            //deadlineSwitch.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width / 6 - 16)
         ])
     }
 }
