@@ -23,7 +23,7 @@ final class TextViewWithPlaceholder: UITextView {
             static let textContainerInset = UIEdgeInsets(top: 15, left: 15, bottom: 15, right: 15)
             static let cornerRadius: CGFloat = 16
             static let textSize: CGFloat = 15
-            static let textColor = UIColor(red: 200, green: 200, blue: 200, alpha: 1)
+            static let textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.3)
             static let placeHolderKey = "Что надо сделать?"
         }
         

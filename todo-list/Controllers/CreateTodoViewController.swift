@@ -59,7 +59,7 @@ final class CreateTodoItemViewController: UIViewController {
         }
         
         enum TextView {
-            static let height: CGFloat = 150
+            static let height: CGFloat = 120
         }
         
         enum DeleteButton {

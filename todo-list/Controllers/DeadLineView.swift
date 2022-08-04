@@ -23,7 +23,7 @@ final class DeadLineView: UIView {
         }
         
         enum StackView {
-            static let insets = UIEdgeInsets(top: 15, left: 16, bottom: -15, right: 0)
+            static let insets = UIEdgeInsets(top: 16, left: 16, bottom: -16, right: 0)
         }
         
         enum Switcher {
@@ -59,7 +59,6 @@ final class DeadLineView: UIView {
     private lazy var belowLabel: UIButton = {
         let button = UIButton()
         button.setTitleColor(.blue, for: .normal)
-        //button.font = UIFont.systemFont(ofSize: Layout.BelowLabel.fontSize)
         button.titleLabel?.font = UIFont.systemFont(ofSize: Layout.BelowLabel.fontSize, weight: .regular)
         button.isHidden = true
         button.translatesAutoresizingMaskIntoConstraints = false
