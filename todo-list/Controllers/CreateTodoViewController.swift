@@ -269,13 +269,13 @@ final class CreateTodoItemViewController: UIViewController {
     private func addConstraints() {
         NSLayoutConstraint.activate([
             topStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            topStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Layout.TopStackView.insets.left),
-            topStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: Layout.TopStackView.insets.right),
+            topStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Layout.TopStackView.insets.left),
+            topStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: Layout.TopStackView.insets.right),
             topStackView.heightAnchor.constraint(equalToConstant: Layout.TopStackView.height),
             
             scrollView.topAnchor.constraint(equalTo: topStackView.bottomAnchor, constant: Layout.ScrollView.insets.top),
-            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Layout.ScrollView.insets.left),
-            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: Layout.ScrollView.insets.right),
+            scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Layout.ScrollView.insets.left),
+            scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: Layout.ScrollView.insets.right),
             scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
             bigStackView.topAnchor.constraint(equalTo: scrollView.topAnchor),
