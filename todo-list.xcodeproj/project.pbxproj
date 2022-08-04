@@ -16,7 +16,7 @@
 		27D880CA289A4D9700991016 /* CreateTodoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D880C9289A4D9700991016 /* CreateTodoViewController.swift */; };
 		27D880CC289A4EC400991016 /* TextViewWithPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D880CB289A4EC400991016 /* TextViewWithPlaceholder.swift */; };
 		27D880D4289A514300991016 /* DeadLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D880D3289A514300991016 /* DeadLineView.swift */; };
-		27D880D6289A514900991016 /* ImportanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D880D5289A514900991016 /* ImportanceView.swift */; };
+		27D880D6289A514900991016 /* PriorityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D880D5289A514900991016 /* PriorityView.swift */; };
 		27F6DA872896D99C001EDAF6 /* todo_listTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27F6DA862896D99C001EDAF6 /* todo_listTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -42,7 +42,7 @@
 		27D880C9289A4D9700991016 /* CreateTodoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTodoViewController.swift; sourceTree = "<group>"; };
 		27D880CB289A4EC400991016 /* TextViewWithPlaceholder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextViewWithPlaceholder.swift; sourceTree = "<group>"; };
 		27D880D3289A514300991016 /* DeadLineView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeadLineView.swift; sourceTree = "<group>"; };
-		27D880D5289A514900991016 /* ImportanceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImportanceView.swift; sourceTree = "<group>"; };
+		27D880D5289A514900991016 /* PriorityView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PriorityView.swift; sourceTree = "<group>"; };
 		27F6DA842896D99C001EDAF6 /* todo-listTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "todo-listTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		27F6DA862896D99C001EDAF6 /* todo_listTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = todo_listTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -110,7 +110,7 @@
 			children = (
 				27D880C9289A4D9700991016 /* CreateTodoViewController.swift */,
 				27D880D3289A514300991016 /* DeadLineView.swift */,
-				27D880D5289A514900991016 /* ImportanceView.swift */,
+				27D880D5289A514900991016 /* PriorityView.swift */,
 				27D880CB289A4EC400991016 /* TextViewWithPlaceholder.swift */,
 			);
 			path = Controllers;
@@ -236,7 +236,7 @@
 				2751FC0828958BBB004C8C1C /* AppDelegate.swift in Sources */,
 				2751FC1D28958F37004C8C1C /* TodoItem.swift in Sources */,
 				27D880CC289A4EC400991016 /* TextViewWithPlaceholder.swift in Sources */,
-				27D880D6289A514900991016 /* ImportanceView.swift in Sources */,
+				27D880D6289A514900991016 /* PriorityView.swift in Sources */,
 				2751FC1F28958F5C004C8C1C /* FileCache.swift in Sources */,
 				2751FC0A28958BBB004C8C1C /* SceneDelegate.swift in Sources */,
 				27D880CA289A4D9700991016 /* CreateTodoViewController.swift in Sources */,
