@@ -237,7 +237,9 @@ final class CreateTodoItemViewController: UIViewController {
     func datePickerTapped(for date: Date) {
         todoItemViewModel.deadline = date
         showDateInLabel(date)
-        calendarDatePicker.isHidden = true
+        UIView.animate(withDuration: Double(0.3), animations: {
+            self.calendarDatePicker.isHidden = true
+        })
     }
     
     func showDateInLabel(_ date: Date) {
@@ -384,7 +386,15 @@ extension CreateTodoItemViewController: DeadLineViewDelegate {
     }
     
     func dateButtonTapped() {
-        calendarDatePicker.isHidden = false
+        if calendarDatePicker.isHidden {
+            UIView.animate(withDuration: Double(0.3), animations: {
+                self.calendarDatePicker.isHidden = false
+            })
+        } else {
+            UIView.animate(withDuration: Double(0.3), animations: {
+                self.calendarDatePicker.isHidden = true
+            })
+        }
         if let date = todoItemViewModel.deadline {
             calendarDatePicker.setDate(date, animated: false)
         }
