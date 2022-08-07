@@ -21,14 +21,17 @@ final class PriorityView: UIView {
         enum PriorityLabel {
             static let leadingInset: CGFloat = 16
             static let text = "Важность"
+            static let textSize: CGFloat = 17
         }
         
         enum SegmentControl {
             static let insets = UIEdgeInsets(top: 13, left: 0, bottom: -13, right: -16)
+            static let width: CGFloat = 48
+            static let fontSize: CGFloat = 15
         }
         
         enum LineView {
-            static let height: CGFloat = 1
+            static let height: CGFloat = 0.5
             static let insets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: -10)
         }
     }
@@ -38,6 +41,7 @@ final class PriorityView: UIView {
     private lazy var priorityLabel: UILabel = {
         let label = UILabel()
         label.text = Layout.PriorityLabel.text
+        label.font = UIFont.systemFont(ofSize: Layout.PriorityLabel.textSize, weight: .regular)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -48,6 +52,14 @@ final class PriorityView: UIView {
         segmentControl.setImage(UIImage(named: "low")!.withRenderingMode(.alwaysOriginal), forSegmentAt: 0)
         segmentControl.setTitle("нет", forSegmentAt: 1)
         segmentControl.setImage(UIImage(named: "high")!.withRenderingMode(.alwaysOriginal), forSegmentAt: 2)
+        
+        
+        segmentControl.setWidth(Layout.SegmentControl.width, forSegmentAt: 0)
+        segmentControl.setWidth(Layout.SegmentControl.width, forSegmentAt: 1)
+        segmentControl.setWidth(Layout.SegmentControl.width, forSegmentAt: 2)
+        
+        let font: [NSAttributedString.Key : Any] = [NSAttributedString.Key.font : UIFont.systemFont(ofSize: Layout.SegmentControl.fontSize)]
+        segmentControl.setTitleTextAttributes(font, for: .normal)
         
         segmentControl.addTarget(self, action: #selector(segmentControlTapped(sender:)), for: .valueChanged)
         segmentControl.translatesAutoresizingMaskIntoConstraints = false

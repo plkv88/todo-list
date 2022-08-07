@@ -8,25 +8,25 @@
 import Foundation
 import UIKit
 
-struct TodoItemViewModel {
-    
-    var id: String?
-    var text: String?
-    var priority: Priority?
-    var deadline: Date?
+// MARK: - Protocol
+
+protocol CreateTodoViewControllerDelegate: AnyObject {
+    func removeFromView(id: String)
+    func updateFromView(todoItemView: TodoItemViewModel)
 }
+
+// MARK: - Class
 
 final class CreateTodoItemViewController: UIViewController {
     
-    private var todoItemViewModel = TodoItemViewModel()
-    private var fileCache = FileCache()
-    private let filename = "todo.json"
+    // MARK: - Properties
     
-    private var keyboardHeight: CGFloat?
+    private var todoItemViewModel = TodoItemViewModel()
+    weak var delegate: CreateTodoViewControllerDelegate?
     
     // MARK: - Layout
     
-    enum Layout {
+    private enum Layout {
         
         static let fontSize: CGFloat = 17
         static let backgroundcolor = UIColor(red: 0.97, green: 0.97, blue: 0.95, alpha: 1.0)
@@ -47,7 +47,7 @@ final class CreateTodoItemViewController: UIViewController {
         
         enum BigStackView {
             
-            static let minimumLineSpacing: CGFloat = 15
+            static let minimumLineSpacing: CGFloat = 16
         }
         
         enum PriorityView {
@@ -94,6 +94,7 @@ final class CreateTodoItemViewController: UIViewController {
         let button = UIButton()
         button.setTitle(Layout.TopStackView.cancelButtonTextKey, for: .normal)
         button.setTitleColor(.systemBlue, for: .normal)
+        button.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -172,7 +173,7 @@ final class CreateTodoItemViewController: UIViewController {
         datePicker.backgroundColor = .white
         datePicker.addTarget(self, action: #selector(datePickerTapped(sender:)), for: .valueChanged)
         datePicker.isHidden = true
-        view.translatesAutoresizingMaskIntoConstraints = false
+        datePicker.translatesAutoresizingMaskIntoConstraints = false
         return datePicker
     }()
     
@@ -202,68 +203,56 @@ final class CreateTodoItemViewController: UIViewController {
         addObservers()
     }
     
-    deinit {
-        removeObservers()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        do {
-            try fileCache.loadFile(fileName: filename)
-            if let todo = fileCache.todoItems.first {
-                todoItemViewModel.priority = todo.priority
-                todoItemViewModel.deadline = todo.deadline
-                todoItemViewModel.id = todo.id
-                todoItemViewModel.text = todo.text
-                
-                updateView()
-                
-                fileCache.removeTodoItem(id: todo.id)
-            }
-        } catch {
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        
+        if UIDevice.current.orientation.isLandscape {
             
+            deleteButton.isHidden = true
+            containerForSmallStackView.isHidden = true
+
+            taskTextView.heightAnchor.constraint(greaterThanOrEqualToConstant: Layout.TextView.height).isActive = false
+            taskTextView.heightAnchor.constraint(equalToConstant: view.safeAreaLayoutGuide.layoutFrame.width - Layout.ScrollView.insets.top * 2 - Layout.TopStackView.height).isActive = true
+
+        } else {
+            deleteButton.isHidden = false
+            containerForSmallStackView.isHidden = false
+
+            taskTextView.heightAnchor.constraint(equalToConstant: view.safeAreaLayoutGuide.layoutFrame.width - Layout.ScrollView.insets.top * 2).isActive = false
+            taskTextView.heightAnchor.constraint(greaterThanOrEqualToConstant: Layout.TextView.height).isActive = true
         }
     }
-    
-    // MARK: - UI
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
          view.endEditing(true)
      }
     
-    @objc private func datePickerTapped(sender: UIDatePicker) {
-        datePickerTapped(for: sender.date)
+    // MARK: - Init
+    
+    deinit {
+        removeObservers()
     }
     
-    func datePickerTapped(for date: Date) {
-        todoItemViewModel.deadline = date
-        showDateInLabel(date)
-        UIView.animate(withDuration: Double(0.3), animations: {
-            self.calendarDatePicker.isHidden = true
-        })
-    }
-    
-    func showDateInLabel(_ date: Date) {
-        deadLineView.dateChosen(date)
-    }
+    // MARK: - UI
     
     private func addSubviews() {
         view.addSubview(topStackView)
-          topStackView.addArrangedSubview(cancelButton)
-          topStackView.addArrangedSubview(nameScreenLabel)
-          topStackView.addArrangedSubview(saveButton)
+        topStackView.addArrangedSubview(cancelButton)
+        topStackView.addArrangedSubview(nameScreenLabel)
+        topStackView.addArrangedSubview(saveButton)
+        
+        view.addSubview(scrollView)
+        scrollView.addSubview(bigStackView)
 
-          view.addSubview(scrollView)
-          scrollView.addSubview(bigStackView)
+        bigStackView.addArrangedSubview(taskTextView)
+        bigStackView.addArrangedSubview(containerForSmallStackView)
 
-          bigStackView.addArrangedSubview(taskTextView)
-          bigStackView.addArrangedSubview(containerForSmallStackView)
+        containerForSmallStackView.addSubview(smallStackView)
+        smallStackView.addArrangedSubview(priorityView)
+        smallStackView.addArrangedSubview(deadLineView)
+        smallStackView.addArrangedSubview(calendarDatePicker)
 
-          containerForSmallStackView.addSubview(smallStackView)
-          smallStackView.addArrangedSubview(priorityView)
-          smallStackView.addArrangedSubview(deadLineView)
-          smallStackView.addArrangedSubview(calendarDatePicker)
-
-          bigStackView.addArrangedSubview(deleteButton)
+        bigStackView.addArrangedSubview(deleteButton)
     }
     
     private func addConstraints() {
@@ -277,69 +266,75 @@ final class CreateTodoItemViewController: UIViewController {
             scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Layout.ScrollView.insets.left),
             scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: Layout.ScrollView.insets.right),
             scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            
+
             bigStackView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             bigStackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             bigStackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             bigStackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             bigStackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            
+
             taskTextView.heightAnchor.constraint(greaterThanOrEqualToConstant: Layout.TextView.height),
             priorityView.heightAnchor.constraint(equalToConstant: Layout.PriorityView.height),
             deadLineView.heightAnchor.constraint(equalToConstant: Layout.DeadLineView.height),
-            
+
             smallStackView.topAnchor.constraint(equalTo: containerForSmallStackView.topAnchor),
             smallStackView.leadingAnchor.constraint(equalTo: containerForSmallStackView.leadingAnchor),
             smallStackView.trailingAnchor.constraint(equalTo: containerForSmallStackView.trailingAnchor),
             smallStackView.bottomAnchor.constraint(equalTo: containerForSmallStackView.bottomAnchor),
-            
+
             deleteButton.heightAnchor.constraint(equalToConstant: Layout.DeleteButton.height)
         ])
     }
     
-    @objc func saveButtonTapped() {
-        guard
-            let text = todoItemViewModel.text,
-            let priority = todoItemViewModel.priority
-        else {
-            return
-        }
-        
-        let todoItem = TodoItem(text: text, priority: priority, deadline: todoItemViewModel.deadline)
-        
-        do {
-            try fileCache.addTodoItem(todoItem: todoItem)
-        } catch {
-            
-        }
-        do {
-            try fileCache.saveFile(fileName: filename)
-        } catch {
-            
-        }
-        fileCache.removeTodoItem(id: todoItem.id)
-    }
-
-    @objc func deleteButtonTapped() {
-        todoItemViewModel = TodoItemViewModel()
+    // MARK: - Public functions
+    
+    func configure(todoItem: TodoItem) {
+        todoItemViewModel = TodoItemViewModel(from: todoItem)
         updateView()
-        
-        do {
-            try fileCache.deleteFile(fileName: filename)
-        } catch {
-            
-        }
     }
+    
+    // MARK: - Private functions
     
     private func updateView() {
         taskTextView.text = todoItemViewModel.text
         taskTextView.customDelegate?.textViewDidChange(with: todoItemViewModel.text ?? "")
         taskTextView.textViewDidEndEditing(taskTextView)
         deadLineView.setSwitch(isOn: todoItemViewModel.deadline == nil ? false : true)
-        priorityView.setPriority(priority: todoItemViewModel.priority ?? Priority.normal)
+        priorityView.setPriority(priority: todoItemViewModel.priority)
         calendarDatePicker.isHidden = true
     }
     
+    @objc private func datePickerTapped(sender: UIDatePicker) {
+        datePickerTapped(for: sender.date)
+    }
+    
+    private func datePickerTapped(for date: Date) {
+        todoItemViewModel.deadline = date
+        showDateInLabel(date)
+        UIView.animate(withDuration: Double(0.3), animations: {
+            self.calendarDatePicker.isHidden = true
+        })
+    }
+    
+    private func showDateInLabel(_ date: Date) {
+        deadLineView.dateChosen(date)
+    }
+    
+    @objc private func cancelButtonTapped() {
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    @objc private func saveButtonTapped() {
+        delegate?.updateFromView(todoItemView: todoItemViewModel)
+        self.dismiss(animated: true, completion: nil)
+    }
+
+    @objc private func deleteButtonTapped() {
+        guard let id = todoItemViewModel.id else { return }
+        delegate?.removeFromView(id: id)
+        self.dismiss(animated: true, completion: nil)
+    }
+
     private func addObservers() {
          NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
          NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -363,6 +358,7 @@ final class CreateTodoItemViewController: UIViewController {
 }
 
 // MARK: - DeadLineViewDelegate
+
 extension CreateTodoItemViewController: DeadLineViewDelegate {
     func deadLineSwitchChanged(isOn: Bool) {
         if isOn {
@@ -373,9 +369,9 @@ extension CreateTodoItemViewController: DeadLineViewDelegate {
             UIView.animate(withDuration: Double(0.3), animations: {
                 self.calendarDatePicker.isHidden = false
             })
-            
-            calendarDatePicker.setDate(todoItemViewModel.deadline!, animated: false)
-            deadLineView.makeLayoutForSwitcherIsON(for: todoItemViewModel.deadline!)
+            guard let deadline = todoItemViewModel.deadline else { return }
+            calendarDatePicker.setDate(deadline, animated: false)
+            deadLineView.makeLayoutForSwitcherIsON(for: deadline)
         } else {
             todoItemViewModel.deadline = nil
             UIView.animate(withDuration: Double(0.3), animations: {
@@ -403,11 +399,11 @@ extension CreateTodoItemViewController: DeadLineViewDelegate {
 }
 
 // MARK: - TextViewWithPlaceholderDelegate
+
 extension CreateTodoItemViewController: TextViewWithPlaceholderDelegate {
     
     func textViewDidChange(with text: String) {
         todoItemViewModel.text = text
-        
         guard
             !(todoItemViewModel.text == nil || todoItemViewModel.text?.isEmpty == true)
         else {
@@ -422,11 +418,11 @@ extension CreateTodoItemViewController: TextViewWithPlaceholderDelegate {
 }
 
 // MARK: - PriorityViewDelegate
+
 extension CreateTodoItemViewController: PriorityViewDelegate {
     
     func priorityChosen(_ priority: Priority) {
         todoItemViewModel.priority = priority
-        
         guard
             !(todoItemViewModel.text == nil || todoItemViewModel.text?.isEmpty == true)
         else {

@@ -5,8 +5,9 @@
 //  Created by Алексей Поляков on 30.07.2022.
 //
 
-
 import Foundation
+
+// MARK: - Enum
 
 enum FileCacheErrors: LocalizedError {
     case alreadyExisting(id: String)
@@ -25,8 +26,15 @@ enum FileCacheErrors: LocalizedError {
     }
 }
 
+// MARK: - Class
+
 final class FileCache {
+    
+    // MARK: - Properties
+    
     private (set) var todoItems: [TodoItem] = []
+    
+    // MARK: - Public functions
     
     func addTodoItem(todoItem: TodoItem) throws {
         guard !todoItems.contains(where: { $0.id == todoItem.id }) else {
@@ -35,15 +43,14 @@ final class FileCache {
         todoItems.append(todoItem)
     }
     
-    func removeTodoItem(id: String) {
-        todoItems.removeAll(where: { $0.id == id })
-    }
-    
-    func getFileURL(by name: String) -> URL? {
-        return FileManager.default
-            .urls(for: .documentDirectory, in: .userDomainMask)
-            .first?
-            .appendingPathComponent(name, isDirectory: false)
+    @discardableResult
+    func removeTodoItem(id: String) -> TodoItem? {
+        if let deletedTodo = todoItems.first(where: { $0.id == id }) {
+            todoItems.removeAll(where: { $0.id == id })
+            return deletedTodo
+        } else {
+            return nil
+        }
     }
     
     func saveFile(fileName: String) throws {
@@ -67,5 +74,14 @@ final class FileCache {
     func deleteFile(fileName: String) throws {
         guard let fileURL = getFileURL(by: fileName) else { throw FileCacheErrors.fileAccess }
         try FileManager.default.removeItem(atPath: fileURL.path)
+    }
+    
+    // MARK: - Private functions
+    
+    private func getFileURL(by name: String) -> URL? {
+        return FileManager.default
+            .urls(for: .documentDirectory, in: .userDomainMask)
+            .first?
+            .appendingPathComponent(name, isDirectory: false)
     }
 }

@@ -19,6 +19,13 @@ class todo_listTests: XCTestCase {
         XCTAssertEqual(fileCache.todoItems.count, 2)
     }
     
+    func getFileURL(by name: String) -> URL? {
+        return FileManager.default
+            .urls(for: .documentDirectory, in: .userDomainMask)
+            .first?
+            .appendingPathComponent(name, isDirectory: false)
+    }
+    
     func testSaveAndLoad() throws {
         let fileCache = FileCache()
 
@@ -27,16 +34,16 @@ class todo_listTests: XCTestCase {
         
         let filename = "test.json"
         
-        XCTAssertFalse(FileManager.default.fileExists(atPath: fileCache.getFileURL(by: filename)!.path))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: getFileURL(by: filename)!.path))
 
         try fileCache.saveFile(fileName: filename)
         
-        XCTAssertTrue(FileManager.default.fileExists(atPath: fileCache.getFileURL(by: filename)!.path))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: getFileURL(by: filename)!.path))
         
         try fileCache.loadFile(fileName: filename)
         
         XCTAssertEqual(fileCache.todoItems.count, 2)
         
-        try FileManager.default.removeItem(atPath: fileCache.getFileURL(by: filename)!.path)
+        try FileManager.default.removeItem(atPath: getFileURL(by: filename)!.path)
     }
 }

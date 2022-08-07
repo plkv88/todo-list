@@ -20,6 +20,7 @@ final class DeadLineView: UIView {
         
         enum TopLabel {
             static let text = "Сделать до"
+            static let textSize: CGFloat = 17
         }
         
         enum StackView {
@@ -31,7 +32,7 @@ final class DeadLineView: UIView {
         }
         
         enum LineView {
-            static let height: CGFloat = 1
+            static let height: CGFloat = 0.5
             static let insets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: -10)
         }
         
@@ -52,6 +53,7 @@ final class DeadLineView: UIView {
     private lazy var topLabel: UILabel = {
         let label = UILabel()
         label.text = Layout.TopLabel.text
+        label.font = UIFont.systemFont(ofSize: Layout.TopLabel.textSize, weight: .regular)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()

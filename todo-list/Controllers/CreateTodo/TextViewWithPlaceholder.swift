@@ -8,34 +8,30 @@
 import UIKit
 
 protocol TextViewWithPlaceholderDelegate: AnyObject {
-    
     func textViewDidChange(with text: String)
 }
 
 final class TextViewWithPlaceholder: UITextView {
 
     // MARK: - Layout
+    
     private enum Layout {
-
+        
         enum TextView {
-            static let insets = UIEdgeInsets(top: 0, left: 16, bottom: -16, right: -16)
-            static let height: CGFloat = 78
-            static let textContainerInset = UIEdgeInsets(top: 15, left: 15, bottom: 15, right: 15)
+            static let textContainerInset = UIEdgeInsets(top: 17, left: 16, bottom: 17, right: 16)
             static let cornerRadius: CGFloat = 16
-            static let textSize: CGFloat = 15
+            static let textSize: CGFloat = 17
             static let textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.3)
             static let placeHolderKey = "Что надо сделать?"
         }
-        
-        enum ContainerForSmallStackView {
-            static let cornerRadius: CGFloat = 16
-        }
     }
-
+    
     // MARK: - Properties
+    
     weak var customDelegate: TextViewWithPlaceholderDelegate?
 
     // MARK: - Init
+    
     override init(frame: CGRect, textContainer: NSTextContainer?) {
         super.init(frame: frame, textContainer: textContainer)
 
@@ -48,9 +44,10 @@ final class TextViewWithPlaceholder: UITextView {
     }
 
     // MARK: - UI
+    
     private func configureUI() {
         delegate = self
-        font = UIFont.systemFont(ofSize: Layout.TextView.textSize, weight: .medium)
+        font = UIFont.systemFont(ofSize: Layout.TextView.textSize, weight: .regular)
         backgroundColor = .white
         layer.cornerRadius = Layout.TextView.cornerRadius
         layer.masksToBounds = true
@@ -60,6 +57,7 @@ final class TextViewWithPlaceholder: UITextView {
     }
 
     // MARK: - Private Functions
+    
     private func addTextViewGesture() {
         isUserInteractionEnabled = true
         let gesture = UITapGestureRecognizer(target: self, action: #selector(textViewTapped))
@@ -81,6 +79,7 @@ final class TextViewWithPlaceholder: UITextView {
 }
 
 // MARK: - UITextViewDelegate
+
 extension TextViewWithPlaceholder: UITextViewDelegate {
 
     func textViewDidChange(_ textView: UITextView) {
