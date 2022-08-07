@@ -27,7 +27,7 @@ final class TodoCell: UITableViewCell {
         }
 
         enum StackView {
-            static let spacing: CGFloat = 0
+            static let spacing: CGFloat = 2
             static let insets = UIEdgeInsets(top: 17, left: 12, bottom: -17, right: -12)
         }
 

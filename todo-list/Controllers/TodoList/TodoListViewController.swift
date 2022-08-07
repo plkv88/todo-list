@@ -242,6 +242,7 @@ extension TodoListViewController: UITableViewDelegate {
         let swipeCheckDone = UIContextualAction(style: .normal, title: nil) { [weak self] _, _, _ in
             guard let changedTaskModelId = self?.cellViewModels[indexPath.row].id else { return }
             self?.taskDoneStatusChangedFor(id: changedTaskModelId)
+            self?.updateViewModels()
         }
         swipeCheckDone.image = UIImage(systemName: "checkmark.circle.fill")
         swipeCheckDone.backgroundColor = .systemGreen
