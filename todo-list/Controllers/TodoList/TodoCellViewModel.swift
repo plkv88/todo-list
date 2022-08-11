@@ -10,7 +10,7 @@ import UIKit
 struct TodoCellViewModel {
 
     // MARK: - Properties
-    
+
     let id: String
     var text: NSMutableAttributedString
     var priority: Priority
@@ -49,7 +49,7 @@ struct TodoCellViewModel {
         fullTextString.append(taskTextMutableString)
         return fullTextString
     }
-    
+
     private static func getStrikeThroughTextIfNeeded(for string: NSMutableAttributedString, done: Bool) -> NSMutableAttributedString {
         if done {
             string.addAttributes(

@@ -13,31 +13,31 @@ protocol PriorityViewDelegate: AnyObject {
 }
 
 final class PriorityView: UIView {
-    
+
     // MARK: - Layout
-    
+
     private enum Layout {
-        
+
         enum PriorityLabel {
             static let leadingInset: CGFloat = 16
             static let text = "Важность"
             static let textSize: CGFloat = 17
         }
-        
+
         enum SegmentControl {
             static let insets = UIEdgeInsets(top: 13, left: 0, bottom: -13, right: -16)
             static let width: CGFloat = 48
             static let fontSize: CGFloat = 15
         }
-        
+
         enum LineView {
             static let height: CGFloat = 0.5
             static let insets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: -10)
         }
     }
-    
+
     // MARK: - Subviews
-    
+
     private lazy var priorityLabel: UILabel = {
         let label = UILabel()
         label.text = Layout.PriorityLabel.text
@@ -45,27 +45,26 @@ final class PriorityView: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
+
     private lazy var segmentControl: UISegmentedControl = {
         let segmentControl = UISegmentedControl(items: ["low", "normal", "high"])
-        
+
         segmentControl.setImage(UIImage(named: "low")!.withRenderingMode(.alwaysOriginal), forSegmentAt: 0)
         segmentControl.setTitle("нет", forSegmentAt: 1)
         segmentControl.setImage(UIImage(named: "high")!.withRenderingMode(.alwaysOriginal), forSegmentAt: 2)
-        
-        
+
         segmentControl.setWidth(Layout.SegmentControl.width, forSegmentAt: 0)
         segmentControl.setWidth(Layout.SegmentControl.width, forSegmentAt: 1)
         segmentControl.setWidth(Layout.SegmentControl.width, forSegmentAt: 2)
-        
-        let font: [NSAttributedString.Key : Any] = [NSAttributedString.Key.font : UIFont.systemFont(ofSize: Layout.SegmentControl.fontSize)]
+
+        let font: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: Layout.SegmentControl.fontSize)]
         segmentControl.setTitleTextAttributes(font, for: .normal)
-        
+
         segmentControl.addTarget(self, action: #selector(segmentControlTapped(sender:)), for: .valueChanged)
         segmentControl.translatesAutoresizingMaskIntoConstraints = false
         return segmentControl
     }()
-    
+
     private lazy var lineView: UIView = {
         let view = UIView()
         view.backgroundColor = .systemGray5
@@ -82,25 +81,25 @@ final class PriorityView: UIView {
 
         configureUI()
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     // MARK: - UI
-    
+
     private func configureUI() {
         backgroundColor = .white
         addSubviews()
         addConstraints()
     }
-    
+
     private func addSubviews() {
         addSubview(priorityLabel)
         addSubview(segmentControl)
         addSubview(lineView)
     }
-    
+
     private func addConstraints() {
         NSLayoutConstraint.activate([
 
@@ -118,9 +117,9 @@ final class PriorityView: UIView {
             lineView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: Layout.LineView.insets.right)
         ])
     }
-    
+
     // MARK: - Private Functions
-    
+
     @objc private func segmentControlTapped(sender: UISegmentedControl) {
         var priority = Priority.normal
 
@@ -136,7 +135,7 @@ final class PriorityView: UIView {
         }
         delegate?.priorityChosen(priority)
     }
-    
+
     func setPriority(priority: Priority) {
         switch priority {
         case .low:

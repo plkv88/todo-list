@@ -16,7 +16,7 @@ protocol NewTodoCellDelegate: AnyObject {
 // MARK: - Class
 
 final class NewToDoCell: UITableViewCell {
-    
+
     // MARK: - Layout and Constants
 
     private enum Layout {
@@ -24,7 +24,7 @@ final class NewToDoCell: UITableViewCell {
         enum ContentView {
             static let cornerRadius: CGFloat = 16
         }
-        
+
         enum TextView {
             static let textSize: CGFloat = 17
             static let textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.3)
@@ -32,7 +32,7 @@ final class NewToDoCell: UITableViewCell {
             static let insets = UIEdgeInsets(top: 17, left: 52, bottom: -17, right: 0)
         }
     }
-    
+
     // MARK: - Subviews
 
     private lazy var textView: UITextView = {
@@ -45,25 +45,25 @@ final class NewToDoCell: UITableViewCell {
         textView.font = UIFont.systemFont(ofSize: Layout.TextView.textSize, weight: .regular)
         return textView
     }()
-    
+
     // MARK: - Properties
 
     weak var delegate: NewTodoCellDelegate?
-    
+
     // MARK: - Init
-    
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         configureUI()
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     // MARK: - Configure
-    
+
     func configureCellWith(isFirstCell firstCell: Bool) {
         if firstCell {
             layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner, .layerMaxXMinYCorner, .layerMinXMinYCorner]
@@ -71,22 +71,22 @@ final class NewToDoCell: UITableViewCell {
             layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
         }
     }
-    
+
     // MARK: - UI
-    
+
     private func configureUI() {
         backgroundColor = .white
         selectionStyle = .none
         layer.cornerRadius = Layout.ContentView.cornerRadius
-        
+
         addSubviews()
         addConstraints()
     }
-    
+
     private func addSubviews() {
         contentView.addSubview(textView)
     }
-    
+
     private func addConstraints() {
         NSLayoutConstraint.activate([
             textView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Layout.TextView.insets.left),
@@ -101,7 +101,7 @@ final class NewToDoCell: UITableViewCell {
 // MARK: - UITextViewDelegate
 
 extension NewToDoCell: UITextViewDelegate {
-        
+
     func textViewDidChange(_ textView: UITextView) {
         let size = textView.bounds.size
         let newSize = textView.sizeThatFits(size)
@@ -111,14 +111,14 @@ extension NewToDoCell: UITextViewDelegate {
             tableView.endUpdates()
         }
     }
-    
+
     func textViewDidBeginEditing(_ textView: UITextView) {
         if textView.text == Layout.TextView.placeHolderKey {
             let newPosition = textView.beginningOfDocument
             textView.selectedTextRange = textView.textRange(from: newPosition, to: newPosition)
         }
     }
-    
+
     func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
         if textView.text == Layout.TextView.placeHolderKey {
             textView.text = ""
@@ -127,14 +127,14 @@ extension NewToDoCell: UITextViewDelegate {
         }
         return false
     }
-    
+
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text != "\n" {
             return true
         }
-        
+
         textView.resignFirstResponder()
-        
+
         if !textView.text.isEmpty {
             delegate?.textViewDidChange(text: textView.text)
             textView.text = Layout.TextView.placeHolderKey

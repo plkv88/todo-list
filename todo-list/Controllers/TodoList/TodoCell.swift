@@ -35,7 +35,7 @@ final class TodoCell: UITableViewCell {
             static let numberOfLines = 3
             static let textSize: CGFloat = 17
         }
-        
+
         enum DeadlineLabel {
             static let textSize: CGFloat = 15
         }
@@ -178,7 +178,7 @@ final class TodoCell: UITableViewCell {
             checkControl.changeCircleImageColorToRed(false)
         }
         checkControl.isSelected = model.done
-        
+
         if needsTopMaskedCorners {
             contentView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         } else {

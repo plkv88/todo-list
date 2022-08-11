@@ -14,9 +14,9 @@ protocol TextViewWithPlaceholderDelegate: AnyObject {
 final class TextViewWithPlaceholder: UITextView {
 
     // MARK: - Layout
-    
+
     private enum Layout {
-        
+
         enum TextView {
             static let textContainerInset = UIEdgeInsets(top: 17, left: 16, bottom: 17, right: 16)
             static let cornerRadius: CGFloat = 16
@@ -25,13 +25,13 @@ final class TextViewWithPlaceholder: UITextView {
             static let placeHolderKey = "Что надо сделать?"
         }
     }
-    
+
     // MARK: - Properties
-    
+
     weak var customDelegate: TextViewWithPlaceholderDelegate?
 
     // MARK: - Init
-    
+
     override init(frame: CGRect, textContainer: NSTextContainer?) {
         super.init(frame: frame, textContainer: textContainer)
 
@@ -44,7 +44,7 @@ final class TextViewWithPlaceholder: UITextView {
     }
 
     // MARK: - UI
-    
+
     private func configureUI() {
         delegate = self
         font = UIFont.systemFont(ofSize: Layout.TextView.textSize, weight: .regular)
@@ -57,7 +57,7 @@ final class TextViewWithPlaceholder: UITextView {
     }
 
     // MARK: - Private Functions
-    
+
     private func addTextViewGesture() {
         isUserInteractionEnabled = true
         let gesture = UITapGestureRecognizer(target: self, action: #selector(textViewTapped))
@@ -67,11 +67,11 @@ final class TextViewWithPlaceholder: UITextView {
     @objc private func textViewTapped() {
         becomeFirstResponder()
     }
-    
+
     private func setTextViewForUserDescription() {
         textColor = .black
     }
-    
+
     private func setTextViewForPlaceHolder() {
         textColor = Layout.TextView.textColor
         text = Layout.TextView.placeHolderKey

@@ -31,7 +31,7 @@ struct TodoItem {
     let deadline: Date?
     let dateCreate: Date
     let dateEdit: Date?
-    
+
     init(id: String = UUID().uuidString,
          text: String, done: Bool = false,
          priority: Priority = .normal, deadline: Date? = nil,
@@ -49,7 +49,7 @@ struct TodoItem {
 extension TodoItem {
     var json: Any {
         var dict: [String: Any] = [:]
-        
+
         dict[Constants.idKey] = self.id
         dict[Constants.textKey] = self.text
         dict[Constants.doneKey] = self.done
@@ -57,33 +57,33 @@ extension TodoItem {
         dict[Constants.deadlineKey] = self.deadline?.timeIntervalSince1970
         dict[Constants.dateCreateKey] = self.dateCreate.timeIntervalSince1970
         dict[Constants.dateEditKey] = self.dateEdit?.timeIntervalSince1970
-        
+
         return dict
     }
-    
+
     static func parse(json: Any) -> TodoItem? {
         if let dict = json as? [String: Any] {
             let id = dict[Constants.idKey] as? String ?? UUID().uuidString
             let text = dict[Constants.textKey] as? String ?? ""
             let done = dict[Constants.doneKey] as? Bool ?? false
-            
+
             var priority = Priority.normal
             if let priorityString = dict[Constants.priorityKey] as? String {
                 priority = Priority(rawValue: priorityString) ?? .normal
             }
-            
+
             var deadline: Date?
             if let deadlineDouble = dict[Constants.deadlineKey] as? Double {
                 deadline = Date(timeIntervalSince1970: deadlineDouble)
             }
-            
+
             let dateCreate = Date(timeIntervalSince1970: dict[Constants.dateCreateKey] as? Double ?? 0)
-            
+
             var dateEdit: Date?
             if let dateEditDouble = dict[Constants.dateEditKey] as? Double {
                 dateEdit = Date(timeIntervalSince1970: dateEditDouble)
             }
-            
+
             return self.init(id: id,
                              text: text, done: done,
                              priority: priority,
