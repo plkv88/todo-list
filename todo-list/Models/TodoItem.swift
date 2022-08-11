@@ -7,6 +7,16 @@
 
 import Foundation
 
+private enum Constants {
+    static let idKey = "id"
+    static let textKey = "text"
+    static let priorityKey = "priority"
+    static let deadlineKey = "deadline"
+    static let doneKey = "done"
+    static let dateCreateKey = "dateCreate"
+    static let dateEditKey = "dateEdit"
+}
+
 enum Priority: String {
     case low
     case normal
@@ -24,7 +34,7 @@ struct TodoItem {
     
     init(id: String = UUID().uuidString,
          text: String, done: Bool = false,
-         priority: Priority, deadline: Date? = nil,
+         priority: Priority = .normal, deadline: Date? = nil,
          dataCreate: Date = Date.now, dataEdit: Date? = nil) {
         self.id = id
         self.text = text
@@ -40,37 +50,37 @@ extension TodoItem {
     var json: Any {
         var dict: [String: Any] = [:]
         
-        dict["id"] = self.id
-        dict["text"] = self.text
-        dict["done"] = self.done
-        dict["priority"] = self.priority == .normal ? nil : self.priority.rawValue
-        dict["deadline"] = self.deadline?.timeIntervalSince1970
-        dict["dateCreate"] = self.dateCreate.timeIntervalSince1970
-        dict["dateEdit"] = self.dateEdit?.timeIntervalSince1970
+        dict[Constants.idKey] = self.id
+        dict[Constants.textKey] = self.text
+        dict[Constants.doneKey] = self.done
+        dict[Constants.priorityKey] = self.priority == .normal ? nil : self.priority.rawValue
+        dict[Constants.deadlineKey] = self.deadline?.timeIntervalSince1970
+        dict[Constants.dateCreateKey] = self.dateCreate.timeIntervalSince1970
+        dict[Constants.dateEditKey] = self.dateEdit?.timeIntervalSince1970
         
         return dict
     }
     
     static func parse(json: Any) -> TodoItem? {
         if let dict = json as? [String: Any] {
-            let id = dict["id"] as? String ?? UUID().uuidString
-            let text = dict["text"] as? String ?? ""
-            let done = dict["done"] as? Bool ?? false
+            let id = dict[Constants.idKey] as? String ?? UUID().uuidString
+            let text = dict[Constants.textKey] as? String ?? ""
+            let done = dict[Constants.doneKey] as? Bool ?? false
             
             var priority = Priority.normal
-            if let priorityString = dict["priority"] as? String {
+            if let priorityString = dict[Constants.priorityKey] as? String {
                 priority = Priority(rawValue: priorityString) ?? .normal
             }
             
             var deadline: Date?
-            if let deadlineDouble = dict["deadline"] as? Double {
+            if let deadlineDouble = dict[Constants.deadlineKey] as? Double {
                 deadline = Date(timeIntervalSince1970: deadlineDouble)
             }
             
-            let dateCreate = Date(timeIntervalSince1970: dict["dateCreate"] as? Double ?? 0)
+            let dateCreate = Date(timeIntervalSince1970: dict[Constants.dateCreateKey] as? Double ?? 0)
             
             var dateEdit: Date?
-            if let dateEditDouble = dict["dateEdit"] as? Double {
+            if let dateEditDouble = dict[Constants.dateEditKey] as? Double {
                 dateEdit = Date(timeIntervalSince1970: dateEditDouble)
             }
             
