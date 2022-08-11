@@ -22,6 +22,7 @@
 		2757971A289B8A6000E35B20 /* AddTodoControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27579719289B8A6000E35B20 /* AddTodoControl.swift */; };
 		2757971C289B8B6E00E35B20 /* TodoCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2757971B289B8B6E00E35B20 /* TodoCellViewModel.swift */; };
 		27579720289E53B600E35B20 /* PresentFromCellAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2757971F289E53B600E35B20 /* PresentFromCellAnimator.swift */; };
+		2771AD5A28A50926002C0AD7 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 2771AD5928A50926002C0AD7 /* Podfile */; };
 		27D880CA289A4D9700991016 /* CreateTodoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D880C9289A4D9700991016 /* CreateTodoViewController.swift */; };
 		27D880CC289A4EC400991016 /* TextViewWithPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D880CB289A4EC400991016 /* TextViewWithPlaceholder.swift */; };
 		27D880D4289A514300991016 /* DeadLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D880D3289A514300991016 /* DeadLineView.swift */; };
@@ -57,6 +58,7 @@
 		27579719289B8A6000E35B20 /* AddTodoControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTodoControl.swift; sourceTree = "<group>"; };
 		2757971B289B8B6E00E35B20 /* TodoCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoCellViewModel.swift; sourceTree = "<group>"; };
 		2757971F289E53B600E35B20 /* PresentFromCellAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentFromCellAnimator.swift; sourceTree = "<group>"; };
+		2771AD5928A50926002C0AD7 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
 		27D880C9289A4D9700991016 /* CreateTodoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTodoViewController.swift; sourceTree = "<group>"; };
 		27D880CB289A4EC400991016 /* TextViewWithPlaceholder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextViewWithPlaceholder.swift; sourceTree = "<group>"; };
 		27D880D3289A514300991016 /* DeadLineView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeadLineView.swift; sourceTree = "<group>"; };
@@ -86,6 +88,7 @@
 		2751FBFB28958BBA004C8C1C = {
 			isa = PBXGroup;
 			children = (
+				2771AD5928A50926002C0AD7 /* Podfile */,
 				2751FC0628958BBB004C8C1C /* todo-list */,
 				27F6DA852896D99C001EDAF6 /* todo-listTests */,
 				2751FC0528958BBB004C8C1C /* Products */,
@@ -257,6 +260,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2771AD5A28A50926002C0AD7 /* Podfile in Resources */,
 				2751FC1428958BBF004C8C1C /* LaunchScreen.storyboard in Resources */,
 				2751FC1128958BBF004C8C1C /* Assets.xcassets in Resources */,
 			);
