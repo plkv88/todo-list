@@ -20,17 +20,11 @@ final class NewToDoCell: UITableViewCell {
     // MARK: - Layout and Constants
 
     private enum Layout {
-
-        enum ContentView {
-            static let cornerRadius: CGFloat = 16
-        }
-
-        enum TextView {
-            static let textSize: CGFloat = 17
-            static let textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.3)
-            static let placeHolderKey = "Новое"
-            static let insets = UIEdgeInsets(top: 17, left: 52, bottom: -17, right: 0)
-        }
+        static let cornerRadius: CGFloat = 16
+        static let textSize: CGFloat = 17
+        static let textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.3)
+        static let placeHolderKey = "Новое"
+        static let insets = UIEdgeInsets(top: 17, left: 52, bottom: -17, right: 0)
     }
 
     // MARK: - Subviews
@@ -40,9 +34,9 @@ final class NewToDoCell: UITableViewCell {
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.isScrollEnabled = false
         textView.delegate = self
-        textView.text = Layout.TextView.placeHolderKey
-        textView.textColor = Layout.TextView.textColor
-        textView.font = UIFont.systemFont(ofSize: Layout.TextView.textSize, weight: .regular)
+        textView.text = Layout.placeHolderKey
+        textView.textColor = Layout.textColor
+        textView.font = UIFont.systemFont(ofSize: Layout.textSize, weight: .regular)
         return textView
     }()
 
@@ -66,7 +60,8 @@ final class NewToDoCell: UITableViewCell {
 
     func configureCellWith(isFirstCell firstCell: Bool) {
         if firstCell {
-            layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner, .layerMaxXMinYCorner, .layerMinXMinYCorner]
+            layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner,
+                                   .layerMaxXMinYCorner, .layerMinXMinYCorner]
         } else {
             layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
         }
@@ -77,7 +72,7 @@ final class NewToDoCell: UITableViewCell {
     private func configureUI() {
         backgroundColor = .white
         selectionStyle = .none
-        layer.cornerRadius = Layout.ContentView.cornerRadius
+        layer.cornerRadius = Layout.cornerRadius
 
         addSubviews()
         addConstraints()
@@ -89,11 +84,10 @@ final class NewToDoCell: UITableViewCell {
 
     private func addConstraints() {
         NSLayoutConstraint.activate([
-            textView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Layout.TextView.insets.left),
-            textView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: Layout.TextView.insets.right),
-            textView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Layout.TextView.insets.top),
-            textView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor,
-                                             constant: Layout.TextView.insets.bottom)
+            textView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Layout.insets.left),
+            textView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: Layout.insets.right),
+            textView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Layout.insets.top),
+            textView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: Layout.insets.bottom)
         ])
     }
 }
@@ -113,14 +107,14 @@ extension NewToDoCell: UITextViewDelegate {
     }
 
     func textViewDidBeginEditing(_ textView: UITextView) {
-        if textView.text == Layout.TextView.placeHolderKey {
+        if textView.text == Layout.placeHolderKey {
             let newPosition = textView.beginningOfDocument
             textView.selectedTextRange = textView.textRange(from: newPosition, to: newPosition)
         }
     }
 
     func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
-        if textView.text == Layout.TextView.placeHolderKey {
+        if textView.text == Layout.placeHolderKey {
             textView.text = ""
             textView.textColor = .black
             return true
@@ -137,8 +131,8 @@ extension NewToDoCell: UITextViewDelegate {
 
         if !textView.text.isEmpty {
             delegate?.textViewDidChange(text: textView.text)
-            textView.text = Layout.TextView.placeHolderKey
-            textView.textColor = Layout.TextView.textColor
+            textView.text = Layout.placeHolderKey
+            textView.textColor = Layout.textColor
         }
         return false
     }

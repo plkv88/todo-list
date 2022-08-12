@@ -21,38 +21,17 @@ final class TodoCell: UITableViewCell {
     // MARK: - Layout and Constants
 
     private enum Layout {
-
-        enum ContentView {
-            static let cornerRadius: CGFloat = 16
-        }
-
-        enum StackView {
-            static let spacing: CGFloat = 2
-            static let insets = UIEdgeInsets(top: 17, left: 12, bottom: -17, right: -12)
-        }
-
-        enum TodoLabel {
-            static let numberOfLines = 3
-            static let textSize: CGFloat = 17
-        }
-
-        enum DeadlineLabel {
-            static let textSize: CGFloat = 15
-        }
-
-        enum CheckControl {
-            static let leadingInset: CGFloat = 16
-            static let size: CGFloat = 30
-        }
-
-        enum ChevronImageView {
-            static let trailingInset: CGFloat = -16
-            static let imageName: String = "chevron.right"
-        }
-
-        enum LineView {
-            static let height: CGFloat = 0.5
-        }
+        static let cornerRadius: CGFloat = 16
+        static let spacing: CGFloat = 2
+        static let insets = UIEdgeInsets(top: 17, left: 12, bottom: -17, right: -12)
+        static let numberOfLines = 3
+        static let todoLabelTextSize: CGFloat = 17
+        static let deadlineLabelTextSize: CGFloat = 15
+        static let leadingInset: CGFloat = 16
+        static let size: CGFloat = 30
+        static let trailingInset: CGFloat = -16
+        static let imageName: String = "chevron.right"
+        static let height: CGFloat = 0.5
     }
 
     // MARK: - Subviews
@@ -67,29 +46,29 @@ final class TodoCell: UITableViewCell {
     private lazy var stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
-        stackView.spacing = Layout.StackView.spacing
+        stackView.spacing = Layout.spacing
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
 
     private lazy var todoLabel: UILabel = {
         let label = UILabel()
-        label.numberOfLines = Layout.TodoLabel.numberOfLines
-        label.font = UIFont.systemFont(ofSize: Layout.TodoLabel.textSize, weight: .regular)
+        label.numberOfLines = Layout.numberOfLines
+        label.font = UIFont.systemFont(ofSize: Layout.todoLabelTextSize, weight: .regular)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
     private lazy var deadLineLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: Layout.DeadlineLabel.textSize, weight: .regular)
+        label.font = UIFont.systemFont(ofSize: Layout.deadlineLabelTextSize, weight: .regular)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
     private lazy var chevronImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: Layout.ChevronImageView.imageName)
+        imageView.image = UIImage(systemName: Layout.imageName)
         imageView.tintColor = .gray
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -125,7 +104,7 @@ final class TodoCell: UITableViewCell {
         selectionStyle = .none
         backgroundColor = .clear
         contentView.backgroundColor = .white
-        contentView.layer.cornerRadius = Layout.ContentView.cornerRadius
+        contentView.layer.cornerRadius = Layout.cornerRadius
 
         addSubviews()
         addConstraints()
@@ -142,27 +121,29 @@ final class TodoCell: UITableViewCell {
 
     private func addConstraints() {
 
-        let heightConstraint = checkControl.heightAnchor.constraint(equalToConstant: Layout.CheckControl.size)
+        let heightConstraint = checkControl.heightAnchor.constraint(equalToConstant: Layout.size)
         heightConstraint.priority = .defaultHigh
 
         NSLayoutConstraint.activate([
-            checkControl.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Layout.CheckControl.leadingInset),
+            checkControl.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Layout.leadingInset),
             heightConstraint,
-            checkControl.widthAnchor.constraint(equalToConstant: Layout.CheckControl.size),
+            checkControl.widthAnchor.constraint(equalToConstant: Layout.size),
             checkControl.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
 
             chevronImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            chevronImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: Layout.ChevronImageView.trailingInset),
+            chevronImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,
+                                                       constant: Layout.trailingInset),
 
-            stackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Layout.StackView.insets.top),
-            stackView.leadingAnchor.constraint(equalTo: checkControl.trailingAnchor, constant: Layout.StackView.insets.left),
-            stackView.trailingAnchor.constraint(equalTo: chevronImageView.trailingAnchor, constant: Layout.StackView.insets.right),
-            stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: Layout.StackView.insets.bottom),
+            stackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Layout.insets.top),
+            stackView.leadingAnchor.constraint(equalTo: checkControl.trailingAnchor, constant: Layout.insets.left),
+            stackView.trailingAnchor.constraint(equalTo: chevronImageView.trailingAnchor,
+                                                constant: Layout.insets.right),
+            stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: Layout.insets.bottom),
 
             lineView.leadingAnchor.constraint(equalTo: stackView.leadingAnchor),
             lineView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             lineView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            lineView.heightAnchor.constraint(equalToConstant: Layout.LineView.height)
+            lineView.heightAnchor.constraint(equalToConstant: Layout.height)
         ])
     }
 

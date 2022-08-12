@@ -25,25 +25,12 @@ final class TodoListViewController: UIViewController {
     // MARK: - Layout
 
     private enum Layout {
-
         static let backgroundcolor = UIColor(red: 0.97, green: 0.97, blue: 0.95, alpha: 1.0)
-
-        enum NavigationItem {
-            static let title = "Мои дела"
-        }
-
-        enum TableView {
-            static let insets = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: -15)
-        }
-
-        enum HeaderView {
-            static let height: CGFloat = 40
-        }
-
-        enum AddTodoControl {
-            static let bottomInset: CGFloat = -15
-            static let size: CGFloat = 60
-        }
+        static let title = "Мои дела"
+        static let insets = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: -15)
+        static let height: CGFloat = 40
+        static let bottomInset: CGFloat = -15
+        static let size: CGFloat = 60
     }
 
     // MARK: - Subviews
@@ -90,7 +77,7 @@ final class TodoListViewController: UIViewController {
 
     private func configureUI() {
         view.backgroundColor = Layout.backgroundcolor
-        navigationItem.title = Layout.NavigationItem.title
+        navigationItem.title = Layout.title
         navigationController?.navigationBar.prefersLargeTitles = true
 
         addSubviews()
@@ -105,15 +92,15 @@ final class TodoListViewController: UIViewController {
     private func addConstraints() {
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Layout.TableView.insets.left),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: Layout.TableView.insets.right),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Layout.insets.left),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: Layout.insets.right),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
             addTodoControl.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor,
-                                                   constant: Layout.AddTodoControl.bottomInset),
+                                                   constant: Layout.bottomInset),
             addTodoControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            addTodoControl.heightAnchor.constraint(equalToConstant: Layout.AddTodoControl.size),
-            addTodoControl.widthAnchor.constraint(equalToConstant: Layout.AddTodoControl.size)
+            addTodoControl.heightAnchor.constraint(equalToConstant: Layout.size),
+            addTodoControl.widthAnchor.constraint(equalToConstant: Layout.size)
         ])
     }
 
@@ -177,18 +164,18 @@ final class TodoListViewController: UIViewController {
 
     private func taskCellTappedFor(id: String) {
         guard let todoItem = fileCache.todoItems.first(where: { $0.id == id }) else { return }
-        let vc = CreateTodoItemViewController()
-        vc.delegate = self
-        vc.transitioningDelegate = self
-        vc.modalPresentationStyle = .custom
-        vc.configure(todoItem: todoItem)
-        self.present(vc, animated: true, completion: nil)
+        let viewController = CreateTodoItemViewController()
+        viewController.delegate = self
+        viewController.transitioningDelegate = self
+        viewController.modalPresentationStyle = .custom
+        viewController.configure(todoItem: todoItem)
+        self.present(viewController, animated: true, completion: nil)
     }
 
     @objc private func addTodoControlTapped() {
-        let vc = CreateTodoItemViewController()
-        vc.delegate = self
-        self.present(vc, animated: true, completion: nil)
+        let viewController = CreateTodoItemViewController()
+        viewController.delegate = self
+        self.present(viewController, animated: true, completion: nil)
     }
 }
 
@@ -209,31 +196,36 @@ extension TodoListViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
     }
 
-    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+    func tableView(_ tableView: UITableView,
+                   contextMenuConfigurationForRowAt indexPath: IndexPath,
+                   point: CGPoint) -> UIContextMenuConfiguration? {
 
         let lastIndex = tableView.numberOfRows(inSection: 0) - 1
         guard indexPath.row != lastIndex else { return nil }
 
         let config = UIContextMenuConfiguration(identifier: indexPath as NSIndexPath,
                                                 previewProvider: { () -> UIViewController? in
-            let tappedTaskModelId = self.cellViewModels[indexPath.row].id
-            let vc = CreateTodoItemViewController()
-            guard let todoItem = self.fileCache.todoItems.first(where: { $0.id == tappedTaskModelId }) else { return nil }
-            vc.configure(todoItem: todoItem)
-            return vc
+            let tappedTodoId = self.cellViewModels[indexPath.row].id
+            let viewController = CreateTodoItemViewController()
+            guard let todoItem = self.fileCache.todoItems.first(where: { $0.id == tappedTodoId }) else { return nil }
+            viewController.configure(todoItem: todoItem)
+            return viewController
         }, actionProvider: nil)
         return config
     }
 
-    func tableView(_ tableView: UITableView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
+    func tableView(_ tableView: UITableView,
+                   willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration,
+                   animator: UIContextMenuInteractionCommitAnimating) {
 
-        guard let vc = animator.previewViewController else { return }
+        guard let viewController = animator.previewViewController else { return }
         animator.addCompletion {
-            self.present(vc, animated: true, completion: nil)
+            self.present(viewController, animated: true, completion: nil)
         }
     }
 
-    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    func tableView(_ tableView: UITableView,
+                   leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
 
         if !(tableView.cellForRow(at: indexPath) is TodoCell) { return nil}
 
@@ -247,7 +239,8 @@ extension TodoListViewController: UITableViewDelegate {
         return UISwipeActionsConfiguration(actions: [swipeCheckDone])
     }
 
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    func tableView(_ tableView: UITableView,
+                   trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
 
         if !(tableView.cellForRow(at: indexPath) is TodoCell) { return nil}
 
@@ -286,7 +279,7 @@ extension TodoListViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return Layout.HeaderView.height
+        return Layout.height
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -318,8 +311,9 @@ extension TodoListViewController: UITableViewDataSource {
 // MARK: - UIViewControllerTransitioningDelegate
 
 extension TodoListViewController: UIViewControllerTransitioningDelegate {
-
-    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    func animationController(forPresented presented: UIViewController,
+                             presenting: UIViewController,
+                             source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         guard let startFrame = selectedCellFrame else { return nil }
         return PresentFromCellAnimator(cellFrame: startFrame)
     }
@@ -328,7 +322,6 @@ extension TodoListViewController: UIViewControllerTransitioningDelegate {
 // MARK: - TaskCellDelegate
 
 extension TodoListViewController: TodoCellDelegate {
-
     func statusChangedFor(id: String) {
         taskDoneStatusChangedFor(id: id)
         updateViewModels()
@@ -338,7 +331,6 @@ extension TodoListViewController: TodoCellDelegate {
 // MARK: - NewTodoCellDelegate
 
 extension TodoListViewController: NewTodoCellDelegate {
-
     func textViewDidChange(text: String) {
         updateTodoItem(todoItemView: TodoItemViewModel(text: text))
         updateViewModels()
@@ -348,7 +340,6 @@ extension TodoListViewController: NewTodoCellDelegate {
 // MARK: - AllTasksHeaderViewDelegate
 
 extension TodoListViewController: TodoListHeaderViewDelegate {
-
     func showDoneTodoButton(isSelected: Bool) {
         showDoneTasksIsSelected = isSelected
         updateViewModels()
@@ -358,7 +349,6 @@ extension TodoListViewController: TodoListHeaderViewDelegate {
 // MARK: - CreateTodoViewControllerDelegate
 
 extension TodoListViewController: CreateTodoViewControllerDelegate {
-
     func removeFromView(id: String) {
         removeTodoItem(id: id)
         updateViewModels()
@@ -373,7 +363,6 @@ extension TodoListViewController: CreateTodoViewControllerDelegate {
 // MARK: - Extensions
 
 extension UITableView {
-
     func registerCellClass(_ typeCell: UITableViewCell.Type) {
         self.register(typeCell, forCellReuseIdentifier: typeCell.identifier)
     }
@@ -388,7 +377,6 @@ extension UITableView {
 }
 
 extension UIView {
-
     static var identifier: String {
         return String(describing: Self.self)
     }

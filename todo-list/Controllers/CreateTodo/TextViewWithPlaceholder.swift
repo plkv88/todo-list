@@ -16,14 +16,11 @@ final class TextViewWithPlaceholder: UITextView {
     // MARK: - Layout
 
     private enum Layout {
-
-        enum TextView {
-            static let textContainerInset = UIEdgeInsets(top: 17, left: 16, bottom: 17, right: 16)
-            static let cornerRadius: CGFloat = 16
-            static let textSize: CGFloat = 17
-            static let textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.3)
-            static let placeHolderKey = "Что надо сделать?"
-        }
+        static let textContainerInset = UIEdgeInsets(top: 17, left: 16, bottom: 17, right: 16)
+        static let cornerRadius: CGFloat = 16
+        static let textSize: CGFloat = 17
+        static let textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.3)
+        static let placeHolderKey = "Что надо сделать?"
     }
 
     // MARK: - Properties
@@ -47,11 +44,11 @@ final class TextViewWithPlaceholder: UITextView {
 
     private func configureUI() {
         delegate = self
-        font = UIFont.systemFont(ofSize: Layout.TextView.textSize, weight: .regular)
+        font = UIFont.systemFont(ofSize: Layout.textSize, weight: .regular)
         backgroundColor = .white
-        layer.cornerRadius = Layout.TextView.cornerRadius
+        layer.cornerRadius = Layout.cornerRadius
         layer.masksToBounds = true
-        textContainerInset = Layout.TextView.textContainerInset
+        textContainerInset = Layout.textContainerInset
 
         setTextViewForPlaceHolder()
     }
@@ -73,8 +70,8 @@ final class TextViewWithPlaceholder: UITextView {
     }
 
     private func setTextViewForPlaceHolder() {
-        textColor = Layout.TextView.textColor
-        text = Layout.TextView.placeHolderKey
+        textColor = Layout.textColor
+        text = Layout.placeHolderKey
     }
 }
 
@@ -86,8 +83,8 @@ extension TextViewWithPlaceholder: UITextViewDelegate {
         guard let text = textView.text else { return }
         customDelegate?.textViewDidChange(with: text)
 
-        if textView.text == nil || textView.text?.isEmpty == true || textView.text == Layout.TextView.placeHolderKey {
-            textView.text = Layout.TextView.placeHolderKey
+        if textView.text == nil || textView.text?.isEmpty == true || textView.text == Layout.placeHolderKey {
+            textView.text = Layout.placeHolderKey
             let newPosition = textView.beginningOfDocument
             textView.selectedTextRange = textView.textRange(from: newPosition, to: newPosition)
             setTextViewForPlaceHolder()
@@ -97,15 +94,15 @@ extension TextViewWithPlaceholder: UITextViewDelegate {
     }
 
     func textViewDidBeginEditing(_ textView: UITextView) {
-        if textView.text == Layout.TextView.placeHolderKey {
+        if textView.text == Layout.placeHolderKey {
             let newPosition = textView.beginningOfDocument
             textView.selectedTextRange = textView.textRange(from: newPosition, to: newPosition)
         }
     }
 
     func textViewDidEndEditing(_ textView: UITextView) {
-        if textView.text == nil || textView.text?.isEmpty == true || textView.text == Layout.TextView.placeHolderKey {
-            textView.text = Layout.TextView.placeHolderKey
+        if textView.text == nil || textView.text?.isEmpty == true || textView.text == Layout.placeHolderKey {
+            textView.text = Layout.placeHolderKey
             setTextViewForPlaceHolder()
         } else {
             setTextViewForUserDescription()
@@ -113,7 +110,7 @@ extension TextViewWithPlaceholder: UITextViewDelegate {
     }
 
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        if textView.text == Layout.TextView.placeHolderKey {
+        if textView.text == Layout.placeHolderKey {
             textView.text = ""
             setTextViewForUserDescription()
         }

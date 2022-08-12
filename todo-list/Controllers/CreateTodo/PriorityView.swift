@@ -17,31 +17,22 @@ final class PriorityView: UIView {
     // MARK: - Layout
 
     private enum Layout {
-
-        enum PriorityLabel {
-            static let leadingInset: CGFloat = 16
-            static let text = "Важность"
-            static let textSize: CGFloat = 17
-        }
-
-        enum SegmentControl {
-            static let insets = UIEdgeInsets(top: 13, left: 0, bottom: -13, right: -16)
-            static let width: CGFloat = 48
-            static let fontSize: CGFloat = 15
-        }
-
-        enum LineView {
-            static let height: CGFloat = 0.5
-            static let insets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: -10)
-        }
+        static let leadingInset: CGFloat = 16
+        static let text = "Важность"
+        static let priorityLabelFontSize: CGFloat = 17
+        static let segmentControlInsets = UIEdgeInsets(top: 13, left: 0, bottom: -13, right: -16)
+        static let segmentControlWidth: CGFloat = 48
+        static let segmentControlFontSize: CGFloat = 15
+        static let height: CGFloat = 0.5
+        static let lineInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: -10)
     }
 
     // MARK: - Subviews
 
     private lazy var priorityLabel: UILabel = {
         let label = UILabel()
-        label.text = Layout.PriorityLabel.text
-        label.font = UIFont.systemFont(ofSize: Layout.PriorityLabel.textSize, weight: .regular)
+        label.text = Layout.text
+        label.font = UIFont.systemFont(ofSize: Layout.priorityLabelFontSize, weight: .regular)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -53,11 +44,12 @@ final class PriorityView: UIView {
         segmentControl.setTitle("нет", forSegmentAt: 1)
         segmentControl.setImage(UIImage(named: "high")!.withRenderingMode(.alwaysOriginal), forSegmentAt: 2)
 
-        segmentControl.setWidth(Layout.SegmentControl.width, forSegmentAt: 0)
-        segmentControl.setWidth(Layout.SegmentControl.width, forSegmentAt: 1)
-        segmentControl.setWidth(Layout.SegmentControl.width, forSegmentAt: 2)
+        segmentControl.setWidth(Layout.segmentControlWidth, forSegmentAt: 0)
+        segmentControl.setWidth(Layout.segmentControlWidth, forSegmentAt: 1)
+        segmentControl.setWidth(Layout.segmentControlWidth, forSegmentAt: 2)
 
-        let font: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: Layout.SegmentControl.fontSize)]
+        let font: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font:
+                                                    UIFont.systemFont(ofSize: Layout.segmentControlFontSize)]
         segmentControl.setTitleTextAttributes(font, for: .normal)
 
         segmentControl.addTarget(self, action: #selector(segmentControlTapped(sender:)), for: .valueChanged)
@@ -104,17 +96,19 @@ final class PriorityView: UIView {
         NSLayoutConstraint.activate([
 
             priorityLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-            priorityLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Layout.PriorityLabel.leadingInset),
+            priorityLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Layout.leadingInset),
 
-            segmentControl.topAnchor.constraint(equalTo: topAnchor, constant: Layout.SegmentControl.insets.top),
-            segmentControl.trailingAnchor.constraint(equalTo: trailingAnchor, constant: Layout.SegmentControl.insets.right),
+            segmentControl.topAnchor.constraint(equalTo: topAnchor, constant: Layout.segmentControlInsets.top),
+            segmentControl.trailingAnchor.constraint(equalTo: trailingAnchor,
+                                                     constant: Layout.segmentControlInsets.right),
 
-            segmentControl.bottomAnchor.constraint(equalTo: bottomAnchor, constant: Layout.SegmentControl.insets.bottom),
+            segmentControl.bottomAnchor.constraint(equalTo: bottomAnchor,
+                                                   constant: Layout.segmentControlInsets.bottom),
 
             lineView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            lineView.heightAnchor.constraint(equalToConstant: Layout.LineView.height),
-            lineView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Layout.LineView.insets.left),
-            lineView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: Layout.LineView.insets.right)
+            lineView.heightAnchor.constraint(equalToConstant: Layout.height),
+            lineView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Layout.lineInsets.left),
+            lineView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: Layout.lineInsets.right)
         ])
     }
 

@@ -17,28 +17,13 @@ final class DeadLineView: UIView {
     // MARK: - Layout
 
     private enum Layout {
-
-        enum TopLabel {
-            static let text = "Сделать до"
-            static let textSize: CGFloat = 17
-        }
-
-        enum StackView {
-            static let insets = UIEdgeInsets(top: 16, left: 16, bottom: -16, right: 0)
-        }
-
-        enum Switcher {
-            static let trailingInset: CGFloat = -16
-        }
-
-        enum LineView {
-            static let height: CGFloat = 0.5
-            static let insets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: -10)
-        }
-
-        enum BelowLabel {
-            static let fontSize: CGFloat = 13
-        }
+        static let text = "Сделать до"
+        static let topLabelFontSize: CGFloat = 17
+        static let stackViewInsets = UIEdgeInsets(top: 16, left: 16, bottom: -16, right: 0)
+        static let trailingInset: CGFloat = -16
+        static let height: CGFloat = 0.5
+        static let lineInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: -10)
+        static let belowLabelFontSize: CGFloat = 13
     }
 
     // MARK: - Subviews
@@ -52,8 +37,8 @@ final class DeadLineView: UIView {
 
     private lazy var topLabel: UILabel = {
         let label = UILabel()
-        label.text = Layout.TopLabel.text
-        label.font = UIFont.systemFont(ofSize: Layout.TopLabel.textSize, weight: .regular)
+        label.text = Layout.text
+        label.font = UIFont.systemFont(ofSize: Layout.topLabelFontSize, weight: .regular)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -61,7 +46,7 @@ final class DeadLineView: UIView {
     private lazy var belowLabel: UIButton = {
         let button = UIButton()
         button.setTitleColor(.blue, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: Layout.BelowLabel.fontSize, weight: .regular)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: Layout.belowLabelFontSize, weight: .regular)
         button.isHidden = true
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(dateButtonTapped), for: .touchUpInside)
@@ -115,16 +100,16 @@ final class DeadLineView: UIView {
 
     private func addConstraints() {
         NSLayoutConstraint.activate([
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Layout.StackView.insets.left),
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Layout.stackViewInsets.left),
             stackView.centerYAnchor.constraint(equalTo: centerYAnchor),
 
             switcher.centerYAnchor.constraint(equalTo: centerYAnchor),
-            switcher.trailingAnchor.constraint(equalTo: trailingAnchor, constant: Layout.Switcher.trailingInset),
+            switcher.trailingAnchor.constraint(equalTo: trailingAnchor, constant: Layout.trailingInset),
 
-            lineView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Layout.LineView.insets.left),
-            lineView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: Layout.LineView.insets.right),
+            lineView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Layout.lineInsets.left),
+            lineView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: Layout.lineInsets.right),
             lineView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            lineView.heightAnchor.constraint(equalToConstant: Layout.LineView.height)
+            lineView.heightAnchor.constraint(equalToConstant: Layout.height)
         ])
     }
 
