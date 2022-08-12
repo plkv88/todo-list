@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import TodoLib
 
 protocol PriorityViewDelegate: AnyObject {
 
@@ -25,6 +26,8 @@ final class PriorityView: UIView {
         static let segmentControlFontSize: CGFloat = 15
         static let height: CGFloat = 0.5
         static let lineInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: -10)
+        static let lowImage = UIImage(named: "low")
+        static let highImage = UIImage(named: "high")
     }
 
     // MARK: - Subviews
@@ -40,9 +43,9 @@ final class PriorityView: UIView {
     private lazy var segmentControl: UISegmentedControl = {
         let segmentControl = UISegmentedControl(items: ["low", "normal", "high"])
 
-        segmentControl.setImage(UIImage(named: "low")!.withRenderingMode(.alwaysOriginal), forSegmentAt: 0)
+        segmentControl.setImage(Layout.lowImage?.withRenderingMode(.alwaysOriginal), forSegmentAt: 0)
         segmentControl.setTitle("нет", forSegmentAt: 1)
-        segmentControl.setImage(UIImage(named: "high")!.withRenderingMode(.alwaysOriginal), forSegmentAt: 2)
+        segmentControl.setImage(Layout.highImage?.withRenderingMode(.alwaysOriginal), forSegmentAt: 2)
 
         segmentControl.setWidth(Layout.segmentControlWidth, forSegmentAt: 0)
         segmentControl.setWidth(Layout.segmentControlWidth, forSegmentAt: 1)

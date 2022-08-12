@@ -3,20 +3,27 @@ PODS:
   - CocoaLumberjack/Swift (3.7.4):
     - CocoaLumberjack/Core
   - SwiftLint (0.48.0)
+  - TodoLib (0.1.12)
 
 DEPENDENCIES:
   - CocoaLumberjack/Swift
   - SwiftLint
+  - TodoLib (from `TodoLib/`)
 
 SPEC REPOS:
   trunk:
     - CocoaLumberjack
     - SwiftLint
 
+EXTERNAL SOURCES:
+  TodoLib:
+    :path: TodoLib/
+
 SPEC CHECKSUMS:
   CocoaLumberjack: 543c79c114dadc3b1aba95641d8738b06b05b646
   SwiftLint: 284cea64b6187c5d6bd83e9a548a64104d546447
+  TodoLib: fc77abf2b5e1bf720b64aca5c11db821565ad859
 
-PODFILE CHECKSUM: 9fa0e15d3a0fb46d1f324a9de4be47b322f7246f
+PODFILE CHECKSUM: 9f572ba3ab98a3b3afe2910559f67695f54bdfe7
 
 COCOAPODS: 1.11.3

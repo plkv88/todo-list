@@ -1,10 +1,3 @@
-//
-//  TodoItem.swift
-//  todo-list
-//
-//  Created by Алексей Поляков on 30.07.2022.
-//
-
 import Foundation
 
 private enum Constants {
@@ -17,25 +10,25 @@ private enum Constants {
     static let dateEditKey = "dateEdit"
 }
 
-enum Priority: String {
+public enum Priority: String {
     case low
     case normal
     case high
 }
 
-struct TodoItem {
-    let id: String
-    let text: String
-    let done: Bool
-    let priority: Priority
-    let deadline: Date?
-    let dateCreate: Date
-    let dateEdit: Date?
+public struct TodoItem {
+    public let id: String
+    public let text: String
+    public let done: Bool
+    public let priority: Priority
+    public let deadline: Date?
+    public let dateCreate: Date
+    public let dateEdit: Date?
 
-    init(id: String = UUID().uuidString,
-         text: String, done: Bool = false,
-         priority: Priority = .normal, deadline: Date? = nil,
-         dataCreate: Date = Date.now, dataEdit: Date? = nil) {
+    public init(id: String = UUID().uuidString,
+                text: String, done: Bool = false,
+                priority: Priority = .normal, deadline: Date? = nil,
+                dataCreate: Date = Date.now, dataEdit: Date? = nil) {
         self.id = id
         self.text = text
         self.done = done
@@ -46,7 +39,7 @@ struct TodoItem {
     }
 }
 
-extension TodoItem {
+public extension TodoItem {
     var json: Any {
         var dict: [String: Any] = [:]
 
