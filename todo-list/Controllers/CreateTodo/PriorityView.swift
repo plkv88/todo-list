@@ -26,8 +26,8 @@ final class PriorityView: UIView {
         static let segmentControlFontSize: CGFloat = 15
         static let height: CGFloat = 0.5
         static let lineInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: -10)
-        static let lowImage = UIImage(named: "low")
-        static let highImage = UIImage(named: "high")
+        static let lowImage = "low"
+        static let highImage = "high"
     }
 
     // MARK: - Subviews
@@ -42,10 +42,14 @@ final class PriorityView: UIView {
 
     private lazy var segmentControl: UISegmentedControl = {
         let segmentControl = UISegmentedControl(items: ["low", "normal", "high"])
+        
+        let resourceBundle = Bundle(identifier: "org.cocoapods.TodoLib")
+        let lowImage = UIImage(named: Layout.lowImage, in: resourceBundle, compatibleWith: nil)
+        let highImage = UIImage(named: Layout.highImage, in: resourceBundle, compatibleWith: nil)
 
-        segmentControl.setImage(Layout.lowImage?.withRenderingMode(.alwaysOriginal), forSegmentAt: 0)
+        segmentControl.setImage(lowImage?.withRenderingMode(.alwaysOriginal), forSegmentAt: 0)
         segmentControl.setTitle("нет", forSegmentAt: 1)
-        segmentControl.setImage(Layout.highImage?.withRenderingMode(.alwaysOriginal), forSegmentAt: 2)
+        segmentControl.setImage(highImage?.withRenderingMode(.alwaysOriginal), forSegmentAt: 2)
 
         segmentControl.setWidth(Layout.segmentControlWidth, forSegmentAt: 0)
         segmentControl.setWidth(Layout.segmentControlWidth, forSegmentAt: 1)

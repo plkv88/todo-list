@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'TodoLib'
-  s.version          = '0.1.12'
+  s.version          = '0.1.26'
   s.summary          = 'A short description of TodoLib.'
 
 # This description is used to generate tags and improve search results.
@@ -32,7 +32,11 @@ TODO: Add long description of the pod here.
 
   s.source_files = 'TodoLib/Classes/**/*'
   
-  s.resources = 'TodoLib/Assets/Assets.xcassets'
+   s.resources = 'TodoLib/Assets/*.xcassets'
+  
+#  s.resource_bundle = {
+#    'TodoLibBundle' => ['TodoLib/Assets/high.png']
+#  }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
