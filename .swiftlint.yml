@@ -2,3 +2,11 @@ excluded:
   - Carthage
   - Pods
   - TodoLib
+  
+file_length:
+  warning: 800
+  error: 1500
+    
+type_body_length:
+     - 300 # когда более 300 строк желтые
+     - 400 # Когда более 400 строк красные

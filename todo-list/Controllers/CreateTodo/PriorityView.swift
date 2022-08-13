@@ -42,7 +42,7 @@ final class PriorityView: UIView {
 
     private lazy var segmentControl: UISegmentedControl = {
         let segmentControl = UISegmentedControl(items: ["low", "normal", "high"])
-        
+
         let resourceBundle = Bundle(identifier: "org.cocoapods.TodoLib")
         let lowImage = UIImage(named: Layout.lowImage, in: resourceBundle, compatibleWith: nil)
         let highImage = UIImage(named: Layout.highImage, in: resourceBundle, compatibleWith: nil)
