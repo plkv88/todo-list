@@ -21,6 +21,8 @@
 		2757971A289B8A6000E35B20 /* AddTodoControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27579719289B8A6000E35B20 /* AddTodoControl.swift */; };
 		2757971C289B8B6E00E35B20 /* TodoCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2757971B289B8B6E00E35B20 /* TodoCellViewModel.swift */; };
 		27579720289E53B600E35B20 /* PresentFromCellAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2757971F289E53B600E35B20 /* PresentFromCellAnimator.swift */; };
+		278131FA28A8F5B900E169AF /* FileCacheService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 278131F928A8F5B900E169AF /* FileCacheService.swift */; };
+		278131FC28A9120500E169AF /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 278131FB28A9120500E169AF /* NetworkService.swift */; };
 		27D880CA289A4D9700991016 /* CreateTodoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D880C9289A4D9700991016 /* CreateTodoViewController.swift */; };
 		27D880CC289A4EC400991016 /* TextViewWithPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D880CB289A4EC400991016 /* TextViewWithPlaceholder.swift */; };
 		27D880D4289A514300991016 /* DeadLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D880D3289A514300991016 /* DeadLineView.swift */; };
@@ -69,6 +71,8 @@
 		27579719289B8A6000E35B20 /* AddTodoControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTodoControl.swift; sourceTree = "<group>"; };
 		2757971B289B8B6E00E35B20 /* TodoCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoCellViewModel.swift; sourceTree = "<group>"; };
 		2757971F289E53B600E35B20 /* PresentFromCellAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentFromCellAnimator.swift; sourceTree = "<group>"; };
+		278131F928A8F5B900E169AF /* FileCacheService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCacheService.swift; sourceTree = "<group>"; };
+		278131FB28A9120500E169AF /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		27D880C9289A4D9700991016 /* CreateTodoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTodoViewController.swift; sourceTree = "<group>"; };
 		27D880CB289A4EC400991016 /* TextViewWithPlaceholder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextViewWithPlaceholder.swift; sourceTree = "<group>"; };
 		27D880D3289A514300991016 /* DeadLineView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeadLineView.swift; sourceTree = "<group>"; };
@@ -135,6 +139,8 @@
 			isa = PBXGroup;
 			children = (
 				2751FC1E28958F5C004C8C1C /* FileCache.swift */,
+				278131FB28A9120500E169AF /* NetworkService.swift */,
+				278131F928A8F5B900E169AF /* FileCacheService.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -376,6 +382,7 @@
 				27579714289B89EC00E35B20 /* TodoListHeaderView.swift in Sources */,
 				2717F6F4289FB791003D2AB5 /* TodoItemViewModel.swift in Sources */,
 				27D880CC289A4EC400991016 /* TextViewWithPlaceholder.swift in Sources */,
+				278131FC28A9120500E169AF /* NetworkService.swift in Sources */,
 				27579718289B8A4500E35B20 /* TodoCell.swift in Sources */,
 				27D880D6289A514900991016 /* PriorityView.swift in Sources */,
 				2751FC1F28958F5C004C8C1C /* FileCache.swift in Sources */,
@@ -385,6 +392,7 @@
 				2751FC0A28958BBB004C8C1C /* SceneDelegate.swift in Sources */,
 				27579710289B635C00E35B20 /* TodoListViewController.swift in Sources */,
 				27D880CA289A4D9700991016 /* CreateTodoViewController.swift in Sources */,
+				278131FA28A8F5B900E169AF /* FileCacheService.swift in Sources */,
 				27579716289B8A2000E35B20 /* CheckControl.swift in Sources */,
 				27D880D4289A514300991016 /* DeadLineView.swift in Sources */,
 				2757971A289B8A6000E35B20 /* AddTodoControl.swift in Sources */,

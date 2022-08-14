@@ -7,6 +7,7 @@
 
 import UIKit
 import TodoLib
+import CocoaLumberjack
 
 // MARK: - Class
 
@@ -64,14 +65,17 @@ final class TodoListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        do {
-            try fileCache.loadFile(fileName: filename)
-        } catch {
-
+        fileCache.loadFile(from: filename) { result in
+            switch result {
+            case .success:
+                DDLogInfo("Load file successful")
+                self.updateViewModels()
+                self.configureUI()
+            case .failure(let error):
+                DDLogError("Load file error")
+                DDLogError(error)
+            }
         }
-
-        updateViewModels()
-        configureUI()
     }
 
     // MARK: - UI
@@ -108,57 +112,63 @@ final class TodoListViewController: UIViewController {
     // MARK: - Private Functions
 
     private func removeTodoItem(id: String) {
-        guard fileCache.removeTodoItem(id: id) == nil else { return }
-        do {
-            try fileCache.saveFile(fileName: filename)
-        } catch {
+        guard fileCache.removeTodoItem(id: id) != nil else { return }
+
+        fileCache.saveFile(to: filename) { result in
+            switch result {
+            case .success:
+                DDLogInfo("Save file successful")
+            case .failure(let error):
+                DDLogError("Save file error")
+                DDLogError(error)
+            }
         }
     }
 
     private func updateTodoItem(todoItemView: TodoItemViewModel) {
         if let todoItemForUpdate = fileCache.todoItems.first(where: { $0.id == todoItemView.id }) {
             guard let deletedTodoItem = fileCache.removeTodoItem(id: todoItemForUpdate.id) else { return }
-            do {
-                try fileCache.addTodoItem(todoItem: TodoItem(id: deletedTodoItem.id,
-                                                             text: todoItemView.text ?? "",
-                                                             done: deletedTodoItem.done,
-                                                             priority: todoItemView.priority,
-                                                             deadline: todoItemView.deadline,
-                                                             dataCreate: deletedTodoItem.dateCreate,
-                                                             dataEdit: Date.now))
-            } catch {
-            }
+            fileCache.addTodoItem(todoItem: TodoItem(id: deletedTodoItem.id,
+                                                     text: todoItemView.text ?? "",
+                                                     done: deletedTodoItem.done,
+                                                     priority: todoItemView.priority,
+                                                     deadline: todoItemView.deadline,
+                                                     dataCreate: deletedTodoItem.dateCreate,
+                                                     dataEdit: Date.now))
+
         } else {
-            do {
-                try fileCache.addTodoItem(todoItem: TodoItem(text: todoItemView.text ?? "",
-                                                             priority: todoItemView.priority,
-                                                             deadline: todoItemView.deadline))
-            } catch {
-            }
+            fileCache.addTodoItem(todoItem: TodoItem(text: todoItemView.text ?? "",
+                                                     priority: todoItemView.priority,
+                                                     deadline: todoItemView.deadline))
         }
-        do {
-            try fileCache.saveFile(fileName: filename)
-        } catch {
+        fileCache.saveFile(to: filename) { result in
+            switch result {
+            case .success:
+                DDLogInfo("Save file successful")
+            case .failure(let error):
+                DDLogError("Save file error")
+                DDLogError(error)
+            }
         }
     }
 
     private func taskDoneStatusChangedFor(id: String) {
         if let todoItem = fileCache.removeTodoItem(id: id) {
-            do {
-                try fileCache.addTodoItem(todoItem: TodoItem(id: todoItem.id,
-                                                             text: todoItem.text,
-                                                             done: todoItem.done == false ? true : false,
-                                                             priority: todoItem.priority,
-                                                             deadline: todoItem.deadline,
-                                                             dataCreate: todoItem.dateCreate,
-                                                             dataEdit: todoItem.dateEdit))
-            } catch {
-
-            }
-            do {
-                try fileCache.saveFile(fileName: filename)
-            } catch {
-
+            fileCache.addTodoItem(todoItem: TodoItem(id: todoItem.id,
+                                                     text: todoItem.text,
+                                                     done: todoItem.done == false ? true : false,
+                                                     priority: todoItem.priority,
+                                                     deadline: todoItem.deadline,
+                                                     dataCreate: todoItem.dateCreate,
+                                                     dataEdit: todoItem.dateEdit))
+            fileCache.saveFile(to: filename) { result in
+                switch result {
+                case .success:
+                    DDLogInfo("Save file successful")
+                case .failure(let error):
+                    DDLogError("Save file error")
+                    DDLogError(error)
+                }
             }
         }
     }

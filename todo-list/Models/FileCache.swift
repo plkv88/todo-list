@@ -29,7 +29,7 @@ enum FileCacheErrors: LocalizedError {
 
 // MARK: - Class
 
-final class FileCache {
+final class FileCache: FileCacheService {
 
     // MARK: - Properties
 
@@ -37,10 +37,8 @@ final class FileCache {
 
     // MARK: - Public functions
 
-    func addTodoItem(todoItem: TodoItem) throws {
-        guard !todoItems.contains(where: { $0.id == todoItem.id }) else {
-            throw FileCacheErrors.alreadyExisting(id: todoItem.id)
-        }
+    func addTodoItem(todoItem: TodoItem) {
+        guard !todoItems.contains(where: { $0.id == todoItem.id }) else { return }
         todoItems.append(todoItem)
     }
 
@@ -54,22 +52,64 @@ final class FileCache {
         }
     }
 
-    func saveFile(fileName: String) throws {
-        let itemsDictArray = todoItems.map { $0.json }
+    func saveFile(to fileName: String, completion: @escaping (Result<Void, Error>) -> Void) {
 
-        guard let fileURL = getFileURL(by: fileName) else { throw FileCacheErrors.fileAccess }
-        try JSONSerialization.data(withJSONObject: itemsDictArray, options: []).write(to: fileURL)
+        DispatchQueue.global().async(qos: .background) { [weak self] in
+
+            let itemsDictArray = self?.todoItems.map { $0.json }
+
+            guard let fileURL = self?.getFileURL(by: fileName) else {
+                DispatchQueue.main.async {
+                    completion(.failure(FileCacheErrors.fileAccess))
+                }
+                return
+            }
+            do {
+                try JSONSerialization.data(withJSONObject: itemsDictArray!, options: []).write(to: fileURL)
+                DispatchQueue.main.async {
+                    completion(.success(()))
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    completion(.failure(FileCacheErrors.invalidJSONFormat))
+                }
+            }
+        }
     }
 
-    func loadFile(fileName: String) throws {
-        guard let fileURL = getFileURL(by: fileName) else { throw FileCacheErrors.fileAccess }
-        let fileData = try Data(contentsOf: fileURL)
-        let itemsArray = try JSONSerialization.jsonObject(with: fileData, options: [])
+    func loadFile(from fileName: String, completion: @escaping (Result<Void, Error>) -> Void) {
 
-        guard let itemsArray = itemsArray as? [Any] else { throw FileCacheErrors.invalidJSONFormat }
+        DispatchQueue.global().async(qos: .background) { [weak self] in
 
-        todoItems.removeAll()
-        todoItems = itemsArray.compactMap { TodoItem.parse(json: $0) }
+            guard let fileURL = self?.getFileURL(by: fileName) else {
+                DispatchQueue.main.async {
+                    completion(.failure(FileCacheErrors.fileAccess))
+                }
+                return
+            }
+            do {
+                let fileData = try Data(contentsOf: fileURL)
+                let itemsArray = try JSONSerialization.jsonObject(with: fileData, options: [])
+
+                guard let itemsArray = itemsArray as? [Any] else {
+                    DispatchQueue.main.async {
+                        completion(.failure(FileCacheErrors.invalidJSONFormat))
+                    }
+                    return
+                }
+
+                self?.todoItems.removeAll()
+                self?.todoItems = itemsArray.compactMap { TodoItem.parse(json: $0) }
+
+                DispatchQueue.main.async {
+                    completion(.success(()))
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    completion(.failure(FileCacheErrors.invalidJSONFormat))
+                }
+            }
+        }
     }
 
     func deleteFile(fileName: String) throws {
