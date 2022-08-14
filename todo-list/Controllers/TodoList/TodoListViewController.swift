@@ -65,21 +65,20 @@ final class TodoListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        fileCache.loadFile(from: filename) { result in
-            switch result {
-            case .success:
-                DDLogInfo("Load file successful")
-                self.updateViewModels()
-                self.configureUI()
-            case .failure(let error):
-                DDLogError("Load file error")
+        Task {
+            do {
+                try await fileCache.loadFile(from: filename)
+            } catch {
                 DDLogError(error)
             }
+            updateViewModels()
+            configureUI()
         }
     }
 
     // MARK: - UI
 
+    @MainActor
     private func configureUI() {
         view.backgroundColor = Layout.backgroundcolor
         navigationItem.title = Layout.title
@@ -114,12 +113,10 @@ final class TodoListViewController: UIViewController {
     private func removeTodoItem(id: String) {
         guard fileCache.removeTodoItem(id: id) != nil else { return }
 
-        fileCache.saveFile(to: filename) { result in
-            switch result {
-            case .success:
-                DDLogInfo("Save file successful")
-            case .failure(let error):
-                DDLogError("Save file error")
+        Task {
+            do {
+                try await fileCache.saveFile(to: filename)
+            } catch {
                 DDLogError(error)
             }
         }
@@ -141,12 +138,10 @@ final class TodoListViewController: UIViewController {
                                                      priority: todoItemView.priority,
                                                      deadline: todoItemView.deadline))
         }
-        fileCache.saveFile(to: filename) { result in
-            switch result {
-            case .success:
-                DDLogInfo("Save file successful")
-            case .failure(let error):
-                DDLogError("Save file error")
+        Task {
+            do {
+                try await fileCache.saveFile(to: filename)
+            } catch {
                 DDLogError(error)
             }
         }
@@ -161,12 +156,10 @@ final class TodoListViewController: UIViewController {
                                                      deadline: todoItem.deadline,
                                                      dataCreate: todoItem.dateCreate,
                                                      dataEdit: todoItem.dateEdit))
-            fileCache.saveFile(to: filename) { result in
-                switch result {
-                case .success:
-                    DDLogInfo("Save file successful")
-                case .failure(let error):
-                    DDLogError("Save file error")
+            Task {
+                do {
+                    try await fileCache.saveFile(to: filename)
+                } catch {
                     DDLogError(error)
                 }
             }
@@ -310,6 +303,7 @@ extension TodoListViewController: UITableViewDataSource {
         }
     }
 
+    @MainActor
     func updateViewModels() {
         cellViewModels = fileCache.todoItems
             .map { TodoCellViewModel.init(from: $0) }
