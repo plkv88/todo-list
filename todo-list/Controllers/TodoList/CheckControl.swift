@@ -58,19 +58,19 @@ class BigAreaControl: UIControl {
 // MARK: - Class CheckControl
 
 final class CheckControl: BigAreaControl {
-    
+
     // MARK: - Subviews
-    
+
     private lazy var checkImageView: UIImageView = {
         let view = UIImageView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-    
+
     // MARK: - Properties
-    
+
     private var circleImageRed = false
-    
+
     override var isSelected: Bool {
         didSet {
             if isSelected {
@@ -82,7 +82,7 @@ final class CheckControl: BigAreaControl {
             }
         }
     }
-    
+
     // MARK: - Init
 
     init(circleImageRed: Bool = false, xInset: CGFloat = 0, yInset: CGFloat = 0) {
@@ -90,20 +90,20 @@ final class CheckControl: BigAreaControl {
         super.init(xInset: xInset, yInset: xInset)
         configureUI()
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     // MARK: - Lifecycle
-    
+
     // MARK: - UI
-    
+
     private func configureUI() {
         addSubview(checkImageView)
         checkImageView.image = UIImage(named: "circle")
         checkImageView.tintColor = .gray
-        
+
         NSLayoutConstraint.activate([
             checkImageView.topAnchor.constraint(equalTo: topAnchor),
             checkImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -111,9 +111,9 @@ final class CheckControl: BigAreaControl {
             checkImageView.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
     }
-    
+
     // MARK: - Public functions
-    
+
     func changeCircleImageColorToRed(_ needsRed: Bool) {
         circleImageRed = needsRed
     }

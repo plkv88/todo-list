@@ -1,0 +1,16 @@
+PODS:
+  - TodoLib (0.1.0)
+
+DEPENDENCIES:
+  - TodoLib (from `../`)
+
+EXTERNAL SOURCES:
+  TodoLib:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  TodoLib: 1b9a09bd21fae448c2bfce70ef998a85ad21d793
+
+PODFILE CHECKSUM: c16fdce49cc6fa3e6b8caf7f5935c0d198e9521b
+
+COCOAPODS: 1.11.3

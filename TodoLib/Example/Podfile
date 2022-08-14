@@ -1,0 +1,5 @@
+
+target 'TodoLib_Example' do
+  use_frameworks!
+  pod 'TodoLib', :path => '../'
+end
