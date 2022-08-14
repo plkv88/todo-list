@@ -14,12 +14,3 @@ protocol FileCacheService {
     func addTodoItem(todoItem: TodoItem)
     func removeTodoItem(id: String) -> TodoItem?
 }
-
-// class MockFileCacheService: FileCacheService {
-//    func load(from file: String, completion: @escaping (Result<[TodoItem], Error>) -> Void) {
-//        let timeout = TimeInterval.random(in: 1..<3)
-//        DispatchQueue.main.asyncAfter(deadline: .now() + timeout) {
-//            completion(.success([TodoItem(text: "1")]))
-//        }
-//    }
-// }

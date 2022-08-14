@@ -65,14 +65,12 @@ final class TodoListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        fileCache.loadFile(from: filename) { result in
+        fileCache.loadFile(from: filename) { [weak self] result in
             switch result {
             case .success:
-                DDLogInfo("Load file successful")
-                self.updateViewModels()
-                self.configureUI()
+                self?.updateViewModels()
+                self?.configureUI()
             case .failure(let error):
-                DDLogError("Load file error")
                 DDLogError(error)
             }
         }
@@ -117,9 +115,8 @@ final class TodoListViewController: UIViewController {
         fileCache.saveFile(to: filename) { result in
             switch result {
             case .success:
-                DDLogInfo("Save file successful")
+                break
             case .failure(let error):
-                DDLogError("Save file error")
                 DDLogError(error)
             }
         }
@@ -144,9 +141,8 @@ final class TodoListViewController: UIViewController {
         fileCache.saveFile(to: filename) { result in
             switch result {
             case .success:
-                DDLogInfo("Save file successful")
+                break
             case .failure(let error):
-                DDLogError("Save file error")
                 DDLogError(error)
             }
         }
@@ -164,9 +160,8 @@ final class TodoListViewController: UIViewController {
             fileCache.saveFile(to: filename) { result in
                 switch result {
                 case .success:
-                    DDLogInfo("Save file successful")
+                    break
                 case .failure(let error):
-                    DDLogError("Save file error")
                     DDLogError(error)
                 }
             }
