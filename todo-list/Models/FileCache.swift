@@ -56,16 +56,17 @@ final class FileCache: FileCacheService {
 
         DispatchQueue.global().async(qos: .background) { [weak self] in
 
-            let itemsDictArray = self?.todoItems.map { $0.json }
+            guard let self = self else { return }
+            let itemsDictArray = self.todoItems.map { $0.json }
 
-            guard let fileURL = self?.getFileURL(by: fileName) else {
+            guard let fileURL = self.getFileURL(by: fileName) else {
                 DispatchQueue.main.async {
                     completion(.failure(FileCacheErrors.fileAccess))
                 }
                 return
             }
             do {
-                try JSONSerialization.data(withJSONObject: itemsDictArray!, options: []).write(to: fileURL)
+                try JSONSerialization.data(withJSONObject: itemsDictArray, options: []).write(to: fileURL)
                 DispatchQueue.main.async {
                     completion(.success(()))
                 }
@@ -81,7 +82,8 @@ final class FileCache: FileCacheService {
 
         DispatchQueue.global().async(qos: .background) { [weak self] in
 
-            guard let fileURL = self?.getFileURL(by: fileName) else {
+            guard let self = self else { return }
+            guard let fileURL = self.getFileURL(by: fileName) else {
                 DispatchQueue.main.async {
                     completion(.failure(FileCacheErrors.fileAccess))
                 }
@@ -98,8 +100,8 @@ final class FileCache: FileCacheService {
                     return
                 }
 
-                self?.todoItems.removeAll()
-                self?.todoItems = itemsArray.compactMap { TodoItem.parse(json: $0) }
+                self.todoItems.removeAll()
+                self.todoItems = itemsArray.compactMap { TodoItem.parse(json: $0) }
 
                 DispatchQueue.main.async {
                     completion(.success(()))
