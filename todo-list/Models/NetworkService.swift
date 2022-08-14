@@ -9,7 +9,7 @@ import Foundation
 import TodoLib
 
 protocol NetworkService {
-  func getAllTodoItems() async throws -> [TodoItem]
-  func editTodoItem(_ item: TodoItem) async throws -> TodoItem
-  func deleteTodoItem(at id: String) async throws -> TodoItem
+    func getAllTodoItems() async throws -> [TodoItem]
+    func editTodoItem(_ item: TodoItem) async throws -> TodoItem
+    func deleteTodoItem(at id: String) async throws -> TodoItem
 }
