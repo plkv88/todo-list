@@ -6,11 +6,12 @@
 //
 
 import UIKit
+import TodoLib
 
 struct TodoCellViewModel {
 
     // MARK: - Properties
-    
+
     let id: String
     var text: NSMutableAttributedString
     var priority: Priority
@@ -43,14 +44,16 @@ struct TodoCellViewModel {
         let taskTextMutableString = NSMutableAttributedString(string: text)
         if priority == .high {
             let exclamationString = NSMutableAttributedString(string: "!! ")
-            exclamationString.addAttributes([.foregroundColor: UIColor.red], range: NSRange(location: 0, length: exclamationString.length))
+            exclamationString.addAttributes([.foregroundColor: UIColor.red],
+                                            range: NSRange(location: 0, length: exclamationString.length))
             fullTextString.append(exclamationString)
         }
         fullTextString.append(taskTextMutableString)
         return fullTextString
     }
-    
-    private static func getStrikeThroughTextIfNeeded(for string: NSMutableAttributedString, done: Bool) -> NSMutableAttributedString {
+
+    private static func getStrikeThroughTextIfNeeded(for string: NSMutableAttributedString,
+                                                     done: Bool) -> NSMutableAttributedString {
         if done {
             string.addAttributes(
                 [

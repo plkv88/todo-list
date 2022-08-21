@@ -9,14 +9,13 @@ import UIKit
 
 final class AddTodoControl: UIControl {
 
-    
     // MARK: - Layout and Constants
 
     private enum Layout {
-        
+
         static let imageName: String = "plus.circle.fill"
     }
-    
+
     // MARK: - Subviews
 
     private lazy var imageView: UIImageView = {
