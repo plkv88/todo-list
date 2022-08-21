@@ -125,7 +125,7 @@ final class CreateTodoItemViewController: UIViewController {
 
     private lazy var priorityView: PriorityView = {
         let view = PriorityView()
-        view.setPriority(priority: Priority.normal)
+        view.setPriority(priority: Priority.basic)
         view.delegate = self
         view.translatesAutoresizingMaskIntoConstraints = false
         return view

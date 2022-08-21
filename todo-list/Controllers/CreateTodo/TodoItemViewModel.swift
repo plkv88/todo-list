@@ -12,7 +12,7 @@ struct TodoItemViewModel {
 
     var id: String?
     var text: String?
-    var priority: Priority = .normal
+    var priority: Priority = .basic
     var deadline: Date?
 
     init(from todoItem: TodoItem) {

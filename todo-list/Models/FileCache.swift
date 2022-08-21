@@ -52,6 +52,10 @@ final class FileCache: FileCacheService {
         }
     }
 
+    func removeAll() {
+        todoItems.removeAll()
+    }
+
     func saveFile(to fileName: String, completion: @escaping (Result<Void, Error>) -> Void) {
 
         DispatchQueue.global().async(qos: .background) { [weak self] in
@@ -78,7 +82,7 @@ final class FileCache: FileCacheService {
         }
     }
 
-    func loadFile(from fileName: String, completion: @escaping (Result<Void, Error>) -> Void) {
+    func loadFile(from fileName: String, completion: @escaping (Result<[TodoItem], Error>) -> Void) {
 
         DispatchQueue.global().async(qos: .background) { [weak self] in
 
@@ -104,7 +108,7 @@ final class FileCache: FileCacheService {
                 self.todoItems = itemsArray.compactMap { TodoItem.parse(json: $0) }
 
                 DispatchQueue.main.async {
-                    completion(.success(()))
+                    completion(.success((self.todoItems)))
                 }
             } catch {
                 DispatchQueue.main.async {

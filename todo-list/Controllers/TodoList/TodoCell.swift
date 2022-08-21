@@ -153,7 +153,7 @@ final class TodoCell: UITableViewCell {
         todoCellViewModel = model
         todoLabel.attributedText = model.text
         deadLineLabel.attributedText = model.deadlineWithCalendar
-        if model.priority == .high {
+        if model.priority == .important {
             checkControl.changeCircleImageColorToRed(true)
         } else {
             checkControl.changeCircleImageColorToRed(false)

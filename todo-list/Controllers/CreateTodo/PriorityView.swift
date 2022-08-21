@@ -122,17 +122,17 @@ final class PriorityView: UIView {
     // MARK: - Private Functions
 
     @objc private func segmentControlTapped(sender: UISegmentedControl) {
-        var priority = Priority.normal
+        var priority = Priority.basic
 
         switch segmentControl.selectedSegmentIndex {
         case 0:
             priority = .low
         case 1:
-            priority = .normal
+            priority = .basic
         case 2:
-            priority = .high
+            priority = .important
         default:
-            priority = .normal
+            priority = .basic
         }
         delegate?.priorityChosen(priority)
     }
@@ -141,9 +141,9 @@ final class PriorityView: UIView {
         switch priority {
         case .low:
             segmentControl.selectedSegmentIndex = 0
-        case .normal:
+        case .basic:
             segmentControl.selectedSegmentIndex = 1
-        case .high:
+        case .important:
             segmentControl.selectedSegmentIndex = 2
         }
     }

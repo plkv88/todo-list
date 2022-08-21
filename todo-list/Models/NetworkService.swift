@@ -8,16 +8,10 @@
 import Foundation
 import TodoLib
 
-protocol NetworkService {
-    func getAllTodoItems(
-        completion: @escaping (Result<[TodoItem], Error>) -> Void
-    )
-    func editTodoItem(
-        _ item: TodoItem,
-        completion: @escaping (Result<TodoItem, Error>) -> Void
-    )
-    func deleteTodoItem(
-        at id: String,
-        completion: @escaping (Result<TodoItem, Error>) -> Void
-    )
+protocol NetworkingService {
+    func getAllTodoItems(completion: @escaping (Result<[TodoItem], Error>) -> Void)
+    func createTodoItem(_ todoItem: TodoItem, completion: @escaping (Result<TodoItem, Error>) -> Void)
+    func updateTodoItem(_ todoItem: TodoItem, completion: @escaping (Result<TodoItem, Error>) -> Void)
+    func deleteTodoItem(_ id: String, completion: @escaping (Result<TodoItem, Error>) -> Void)
+    func putAllTodoItems(_ todoItems: [TodoItem], completion: @escaping (Result<[TodoItem], Error>) -> Void)
 }
