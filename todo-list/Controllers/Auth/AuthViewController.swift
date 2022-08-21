@@ -9,15 +9,18 @@ import Foundation
 import UIKit
 import WebKit
 
-// MARK: - Layout
-
 enum AuthType: String {
     case yandexOAuth = "OAuth "
     case bearer = "Bearer "
 }
 
+// MARK: - Class
+
+
 final class AuthViewController: UIViewController {
 
+    // MARK: - Layout
+    
     private enum Layout {
         static let backgroundcolor = UIColor(red: 0.97, green: 0.97, blue: 0.95, alpha: 1.0)
         static let title = "Авторизация"
@@ -33,6 +36,8 @@ final class AuthViewController: UIViewController {
     private var token: String = "ProtectedNecromancy"
     private var authType: AuthType = .bearer
 
+    // MARK: - Subviews
+    
     private lazy var noAuthButton: UIButton = {
         let button = UIButton()
         button.setTitle(Layout.buttonTitle, for: .normal)
@@ -45,6 +50,8 @@ final class AuthViewController: UIViewController {
         button.addTarget(self, action: #selector(noAuthButtonTapped), for: .touchUpInside)
         return button
     }()
+    
+    // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,7 +88,8 @@ final class AuthViewController: UIViewController {
         navigationItem.title = Layout.title
 
     }
-
+    // MARK: - Private Functions
+    
     @objc private func noAuthButtonTapped() {
         loadMainViewController()
     }
@@ -93,6 +101,7 @@ final class AuthViewController: UIViewController {
         self.navigationController?.pushViewController(viewController, animated: true)
     }
 }
+// MARK: - WKNavigationDelegate
 
 extension AuthViewController: WKNavigationDelegate {
     func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse,
