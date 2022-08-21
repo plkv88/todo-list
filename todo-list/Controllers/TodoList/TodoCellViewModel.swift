@@ -42,7 +42,7 @@ struct TodoCellViewModel {
     private static func getImportantTextIfNeeded(for text: String, priority: Priority) -> NSMutableAttributedString {
         let fullTextString: NSMutableAttributedString = NSMutableAttributedString(string: "")
         let taskTextMutableString = NSMutableAttributedString(string: text)
-        if priority == .high {
+        if priority == .important {
             let exclamationString = NSMutableAttributedString(string: "!! ")
             exclamationString.addAttributes([.foregroundColor: UIColor.red],
                                             range: NSRange(location: 0, length: exclamationString.length))

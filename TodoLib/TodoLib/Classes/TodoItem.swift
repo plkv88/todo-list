@@ -12,8 +12,8 @@ private enum Constants {
 
 public enum Priority: String {
     case low
-    case normal
-    case high
+    case basic
+    case important
 }
 
 public struct TodoItem {
@@ -27,7 +27,7 @@ public struct TodoItem {
 
     public init(id: String = UUID().uuidString,
                 text: String, done: Bool = false,
-                priority: Priority = .normal, deadline: Date? = nil,
+                priority: Priority = .basic, deadline: Date? = nil,
                 dataCreate: Date = Date.now, dataEdit: Date? = nil) {
         self.id = id
         self.text = text
@@ -46,7 +46,7 @@ public extension TodoItem {
         dict[Constants.idKey] = self.id
         dict[Constants.textKey] = self.text
         dict[Constants.doneKey] = self.done
-        dict[Constants.priorityKey] = self.priority == .normal ? nil : self.priority.rawValue
+        dict[Constants.priorityKey] = self.priority == .basic ? nil : self.priority.rawValue
         dict[Constants.deadlineKey] = self.deadline?.timeIntervalSince1970
         dict[Constants.dateCreateKey] = self.dateCreate.timeIntervalSince1970
         dict[Constants.dateEditKey] = self.dateEdit?.timeIntervalSince1970
@@ -60,9 +60,9 @@ public extension TodoItem {
             let text = dict[Constants.textKey] as? String ?? ""
             let done = dict[Constants.doneKey] as? Bool ?? false
 
-            var priority = Priority.normal
+            var priority = Priority.basic
             if let priorityString = dict[Constants.priorityKey] as? String {
-                priority = Priority(rawValue: priorityString) ?? .normal
+                priority = Priority(rawValue: priorityString) ?? .basic
             }
 
             var deadline: Date?
@@ -87,4 +87,35 @@ public extension TodoItem {
             return nil
         }
     }
+}
+
+public extension TodoItem {
+    init(_ todoItemNetwork: TodoItemNetwork) {
+        id = todoItemNetwork.id
+        text = todoItemNetwork.text
+        priority = Priority(rawValue: todoItemNetwork.priority) ?? .basic
+        if let newDeadline = todoItemNetwork.deadline {
+            deadline = Date(timeIntervalSince1970: TimeInterval(newDeadline))
+        } else {
+            deadline = nil
+        }
+        done = todoItemNetwork.done
+        dateCreate = Date(timeIntervalSince1970: TimeInterval(todoItemNetwork.dateCreate))
+        if let newDateEdit = todoItemNetwork.dateEdit {
+            dateEdit = Date(timeIntervalSince1970: TimeInterval(newDateEdit))
+        } else {
+            dateEdit = nil
+        }
+    }
+    
+    func asCompleted() -> TodoItem {
+        TodoItem(id: self.id,
+                 text: self.text,
+                 done: self.done == false ? true : false,
+                 priority: self.priority,
+                 deadline: self.deadline,
+                 dataCreate: self.dateCreate,
+                 dataEdit: self.dateEdit)
+    }
+
 }
