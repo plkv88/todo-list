@@ -9,8 +9,9 @@ import Foundation
 import TodoLib
 
 protocol FileCacheService {
-    func saveFile(to fileName: String, completion: @escaping (Result<Void, Error>) -> Void)
-    func loadFile(from fileName: String, completion: @escaping (Result<[TodoItem], Error>) -> Void)
-    func addTodoItem(todoItem: TodoItem)
-    func removeTodoItem(id: String) -> TodoItem?
+    func save(items: [TodoItem], completion: @escaping (Swift.Result<[TodoItem], Error>) -> Void)
+    func load(completion: @escaping (Swift.Result<[TodoItem], Error>) -> Void)
+    func create(_ item: TodoItem, completion: @escaping (Swift.Result<TodoItem, Error>) -> Void)
+    func update(_ item: TodoItem, completion: @escaping (Swift.Result<TodoItem, Error>) -> Void)
+    func delete(_ id: String, completion: @escaping (Swift.Result<Void, Error>) -> Void)
 }

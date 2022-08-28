@@ -9,6 +9,8 @@ import Foundation
 import TodoLib
 import CocoaLumberjack
 
+// MARK: - Protocol
+
 protocol TodoServiceDelegate: AnyObject {
     func update()
 }
@@ -22,7 +24,6 @@ final class TodoService {
     private var fileCache = FileCache()
     private var networkService = DefaultNetworkingService()
 
-    private let filename = "todo.json"
     var auth = "" {
         didSet {
             networkService.auth = auth
@@ -40,7 +41,7 @@ final class TodoService {
     func getTodoItem(id: String) -> TodoItem? { return fileCache.todoItems.first(where: { $0.id == id }) }
 
     func load(completion: @escaping (Result<Void, Error>) -> Void) {
-        fileCache.loadFile(from: filename) { [weak self] result in
+        fileCache.load { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success(let todoItems):
@@ -48,11 +49,7 @@ final class TodoService {
                 self.networkService.putAllTodoItems(todoItems) { result in
                     switch result {
                     case .success(let todoItems):
-                        self.fileCache.removeAll()
-                        for todoItem in todoItems {
-                            self.fileCache.addTodoItem(todoItem: todoItem)
-                        }
-                        self.fileCache.saveFile(to: self.filename) { result in
+                        self.fileCache.save(items: todoItems) { result in
                             switch result {
                             case .success:
                                 DispatchQueue.main.async {
@@ -72,37 +69,13 @@ final class TodoService {
                     }
                 }
             case .failure:
-                self.networkService.getAllTodoItems { result in
-                    switch result {
-                    case .success(let todoItems):
-                        for todoItem in todoItems {
-                            self.fileCache.addTodoItem(todoItem: todoItem)
-                        }
-                        self.fileCache.saveFile(to: self.filename) { result in
-                            switch result {
-                            case .success:
-                                DispatchQueue.main.async {
-                                    completion(.success(()))
-                                }
-                            case .failure(let error):
-                                DispatchQueue.main.async {
-                                    completion(.failure(error))
-                                }
-                            }
-                        }
-                    case .failure(let error):
-                        DispatchQueue.main.async {
-                            completion(.failure(error))
-                        }
-                    }
-                }
+                break
             }
         }
     }
 
     func createTodoItem(todoItem: TodoItem, completion: @escaping (Result<Void, Error>) -> Void) {
-        fileCache.addTodoItem(todoItem: todoItem)
-        fileCache.saveFile(to: filename) { [weak self] result in
+        fileCache.create(todoItem) { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success:
@@ -111,11 +84,7 @@ final class TodoService {
                     self.networkService.putAllTodoItems(self.fileCache.todoItems) { result in
                         switch result {
                         case .success(let todoItems):
-                            self.fileCache.removeAll()
-                            for todoItem in todoItems {
-                                self.fileCache.addTodoItem(todoItem: todoItem)
-                            }
-                            self.fileCache.saveFile(to: self.filename) { result in
+                            self.fileCache.save(items: todoItems) { result in
                                 switch result {
                                 case .success:
                                     DispatchQueue.main.async {
@@ -158,9 +127,7 @@ final class TodoService {
     }
 
     func updateTodoItem(todoItem: TodoItem, completion: @escaping (Result<Void, Error>) -> Void) {
-        guard fileCache.removeTodoItem(id: todoItem.id) != nil else { return }
-        fileCache.addTodoItem(todoItem: todoItem)
-        fileCache.saveFile(to: filename) { [weak self] result in
+        fileCache.update(todoItem) { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success:
@@ -169,11 +136,7 @@ final class TodoService {
                     self.networkService.putAllTodoItems(self.fileCache.todoItems) { result in
                         switch result {
                         case .success(let todoItems):
-                            self.fileCache.removeAll()
-                            for todoItem in todoItems {
-                                self.fileCache.addTodoItem(todoItem: todoItem)
-                            }
-                            self.fileCache.saveFile(to: self.filename) { result in
+                            self.fileCache.save(items: todoItems) { result in
                                 switch result {
                                 case .success:
                                     DispatchQueue.main.async {
@@ -215,9 +178,8 @@ final class TodoService {
         }
     }
 
-    func removeTodoItem( id: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        guard fileCache.removeTodoItem(id: id) != nil else { return }
-        fileCache.saveFile(to: filename) { [weak self] result in
+    func removeTodoItem(id: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        fileCache.delete(id) { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success:
@@ -226,11 +188,7 @@ final class TodoService {
                     self.networkService.putAllTodoItems(self.fileCache.todoItems) { result in
                         switch result {
                         case .success(let todoItems):
-                            self.fileCache.removeAll()
-                            for todoItem in todoItems {
-                                self.fileCache.addTodoItem(todoItem: todoItem)
-                            }
-                            self.fileCache.saveFile(to: self.filename) { result in
+                            self.fileCache.save(items: todoItems) { result in
                                 switch result {
                                 case .success:
                                     DispatchQueue.main.async {
