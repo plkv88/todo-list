@@ -24,7 +24,6 @@ final class TodoService {
     private var fileCache = FileCache()
     private var networkService = DefaultNetworkingService()
 
-    private let filename = "todo.json"
     var auth = "" {
         didSet {
             networkService.auth = auth

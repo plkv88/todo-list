@@ -27,13 +27,14 @@ final class FileCache: FileCacheService {
     private let dateCreate = Expression<Date>("dateCreate")
     private let dateEdit = Expression<Date?>("dateEdit")
     private let todoItemsTable = Table("TodoItems")
+    private let fileName = "todoItems.sqlite3"
 
     private var dbUrl: URL? {
         guard let documentDirectory = FileManager.default.urls(for: .documentDirectory,
                                                                in: .userDomainMask).first else {
             return nil
         }
-        let path = documentDirectory.appendingPathComponent("todoItems.sqlite3")
+        let path = documentDirectory.appendingPathComponent(fileName)
         return path
     }
 
