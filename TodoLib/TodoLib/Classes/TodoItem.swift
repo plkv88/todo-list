@@ -1,4 +1,5 @@
 import Foundation
+import SQLite
 
 private enum Constants {
     static let idKey = "id"
@@ -8,6 +9,13 @@ private enum Constants {
     static let doneKey = "done"
     static let dateCreateKey = "dateCreate"
     static let dateEditKey = "dateEdit"
+    static let idSQL = Expression<String>("id")
+    static let textSQL = Expression<String>("text")
+    static let prioritySQL = Expression<String>("priority")
+    static let deadlineSQL = Expression<Date?>("deadline")
+    static let doneSQL = Expression<Bool>("done")
+    static let dateCreateSQL = Expression<Date>("dateCreate")
+    static let dateEditSQL = Expression<Date?>("dateEdit")
 }
 
 public enum Priority: String {
@@ -52,6 +60,58 @@ public extension TodoItem {
         dict[Constants.dateEditKey] = self.dateEdit?.timeIntervalSince1970
 
         return dict
+    }
+    
+    var sqlInsertStatement: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        
+        var deadlineString = ""
+        if let deadlineToString = self.deadline {
+            deadlineString = "'" + formatter.string(from: deadlineToString) + "'"
+        } else {
+            deadlineString = "NULL"
+        }
+        
+        var dateEditString = ""
+        if let dateEditToString = self.dateEdit {
+            dateEditString = "'" + formatter.string(from: dateEditToString) + "'"
+        } else {
+            dateEditString = "NULL"
+        }
+        
+        let doneString = self.done ? "1" : "0"
+        
+        let sqlStatement = "INSERT INTO \"TodoItems\" (" +
+        "\"\(Constants.idKey)\", " +
+        "\"\(Constants.textKey)\", " +
+        "\"\(Constants.priorityKey)\", " +
+        "\"\(Constants.deadlineKey)\", " +
+        "\"\(Constants.doneKey)\", " +
+        "\"\(Constants.dateCreateKey)\", " +
+        "\"\(Constants.dateEditKey)\")" +
+        " VALUES (" +
+        "'\(self.id)', " +
+        "'\(self.text)', " +
+        "'\(self.priority.rawValue)', " +
+        "\(deadlineString), " +
+        "\(doneString), " +
+        "'\(formatter.string(from: self.dateCreate))', " +
+        "\(dateEditString))"
+        
+        return sqlStatement
+    }
+    
+    static func parseSQL(row: Row) -> TodoItem? {
+        return self.init(id: row[Constants.idSQL],
+                         text: row[Constants.textSQL],
+                         done: row[Constants.doneSQL],
+                         priority: Priority(rawValue: row[Constants.prioritySQL]) ?? .basic,
+                         deadline: row[Constants.deadlineSQL],
+                         dataCreate: row[Constants.dateCreateSQL],
+                         dataEdit: row[Constants.dateEditSQL])
     }
 
     static func parse(json: Any) -> TodoItem? {

@@ -12,37 +12,37 @@ import TodoLib
 // MARK: - Class
 
 final class FileCacheSQL {
-    
+
     // MARK: - Properties
 
     private (set) var todoItems: [TodoItem] = []
-    
-    let id = Expression<String>("id")
-    let text = Expression<String>("text")
-    let priority = Expression<String>("priority")
-    let deadline = Expression<Int?>("deadline")
-    let done = Expression<Bool>("done")
-    let createdAt = Expression<Int>("createdAt")
-    let updatedAt = Expression<Int?>("updatedAt")
-    let todoItemsTable = Table("TodoItems")
-    
-    var dbUrl: URL? {
+
+    private let id = Expression<String>("id")
+    private let text = Expression<String>("text")
+    private let priority = Expression<String>("priority")
+    private let deadline = Expression<Date?>("deadline")
+    private let done = Expression<Bool>("done")
+    private let dateCreate = Expression<Date>("dateCreate")
+    private let dateEdit = Expression<Date?>("dateEdit")
+    private let todoItemsTable = Table("TodoItems")
+
+    private var dbUrl: URL? {
         guard let documentDirectory = FileManager.default.urls(for: .documentDirectory,
                                                                in: .userDomainMask).first else {
             return nil
         }
-        let path = documentDirectory.appendingPathComponent("TodoList.sqlite3")
+        let path = documentDirectory.appendingPathComponent("todo5.sqlite3")
         return path
     }
-    
+
     public init() {
         do {
             try createTables()
         } catch let error {
-            print(":( \(error)")
+            print("\(error)")
         }
     }
-    
+
     func createTables() throws {
         guard let dbUrl = dbUrl else { return }
         FileManager.createFileIfNotExists(with: dbUrl)
@@ -53,11 +53,76 @@ final class FileCacheSQL {
             table.column(priority)
             table.column(deadline)
             table.column(done)
-            table.column(createdAt)
-            table.column(updatedAt)
+            table.column(dateCreate)
+            table.column(dateEdit)
         })
     }
 
+    func load() throws {
+        try getItems { [weak self] items in
+            self?.todoItems = items
+        }
+    }
+
+    func getItems(completion: ([TodoItem]) -> Void) throws {
+        guard let dbUrl = dbUrl else { return }
+        todoItems.removeAll()
+        let connection = try Connection(dbUrl.path)
+        var newTodoItems: [TodoItem] = []
+        for row in try connection.prepare(todoItemsTable) {
+            if let todoItem = TodoItem.parseSQL(row: row) {
+                newTodoItems.append(todoItem)
+            }
+        }
+        completion(newTodoItems)
+    }
+
+    func save(_ items: [TodoItem], completion: ([TodoItem]) -> Void) throws {
+        guard let dbUrl = dbUrl else { return }
+        var dbItems: [TodoItem] = []
+        try getItems { items in
+            dbItems = items
+        }
+        let connection = try Connection(dbUrl.path)
+        let itemsIds = items.map({$0.id})
+        let dbItemsIds = dbItems.map({$0.id})
+        let itemsToDelete = todoItemsTable.filter(!itemsIds.contains(id))
+        let itemsToCreate = items.filter({!dbItemsIds.contains($0.id)})
+        let itemsToUpdate = items.filter({dbItemsIds.contains($0.id)})
+        try connection.run(itemsToDelete.delete())
+        for item in itemsToCreate {
+            try create(item)
+        }
+        for item in itemsToUpdate {
+            try update(item)
+        }
+        completion(items)
+    }
+
+    func create(_ todoItem: TodoItem) throws {
+        guard let dbUrl = dbUrl else { return }
+        let connection = try Connection(dbUrl.path)
+        try connection.run(todoItem.sqlInsertStatement)
+        todoItems.append(todoItem)
+    }
+
+    func update(_ todoItem: TodoItem) throws {
+        guard let dbUrl = dbUrl else { return }
+        let connection = try Connection(dbUrl.path)
+        let updatedTodoItem = todoItemsTable.filter(id == todoItem.id)
+        try connection.run(updatedTodoItem.update(text <- todoItem.text,
+                                                  priority <- todoItem.priority.rawValue,
+                                                  deadline <- todoItem.deadline,
+                                                  done <- todoItem.done,
+                                                  dateEdit <- todoItem.dateEdit))
+    }
+
+    func deleteTodoItem(_ id: String) throws {
+        guard let dbUrl = dbUrl else { return }
+        let connection = try Connection(dbUrl.path)
+        let todoItem = todoItemsTable.filter(self.id == id)
+        try connection.run(todoItem.delete())
+    }
 }
 
 extension FileManager {
@@ -68,4 +133,3 @@ extension FileManager {
         }
     }
 }
-
