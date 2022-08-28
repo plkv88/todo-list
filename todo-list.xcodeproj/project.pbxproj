@@ -13,7 +13,6 @@
 		2751FC0A28958BBB004C8C1C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2751FC0928958BBB004C8C1C /* SceneDelegate.swift */; };
 		2751FC1128958BBF004C8C1C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2751FC1028958BBF004C8C1C /* Assets.xcassets */; };
 		2751FC1428958BBF004C8C1C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2751FC1228958BBF004C8C1C /* LaunchScreen.storyboard */; };
-		2751FC1F28958F5C004C8C1C /* FileCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2751FC1E28958F5C004C8C1C /* FileCache.swift */; };
 		27579710289B635C00E35B20 /* TodoListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2757970F289B635C00E35B20 /* TodoListViewController.swift */; };
 		27579714289B89EC00E35B20 /* TodoListHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27579713289B89EC00E35B20 /* TodoListHeaderView.swift */; };
 		27579716289B8A2000E35B20 /* CheckControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27579715289B8A2000E35B20 /* CheckControl.swift */; };
@@ -21,7 +20,7 @@
 		2757971A289B8A6000E35B20 /* AddTodoControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27579719289B8A6000E35B20 /* AddTodoControl.swift */; };
 		2757971C289B8B6E00E35B20 /* TodoCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2757971B289B8B6E00E35B20 /* TodoCellViewModel.swift */; };
 		27579720289E53B600E35B20 /* PresentFromCellAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2757971F289E53B600E35B20 /* PresentFromCellAnimator.swift */; };
-		275CDB9728B8B14B005464BC /* FileCacheSQL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 275CDB9628B8B14B005464BC /* FileCacheSQL.swift */; };
+		275CDB9728B8B14B005464BC /* FileCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 275CDB9628B8B14B005464BC /* FileCache.swift */; };
 		275DD7E628AC74650095288F /* DefaultNetworkingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 275DD7E528AC74650095288F /* DefaultNetworkingService.swift */; };
 		275DD7EC28B0FA550095288F /* TodoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 275DD7EB28B0FA550095288F /* TodoService.swift */; };
 		275DD7EF28B219760095288F /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 275DD7EE28B219760095288F /* AuthViewController.swift */; };
@@ -67,7 +66,6 @@
 		2751FC1028958BBF004C8C1C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2751FC1328958BBF004C8C1C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2751FC1528958BBF004C8C1C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		2751FC1E28958F5C004C8C1C /* FileCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCache.swift; sourceTree = "<group>"; };
 		2757970F289B635C00E35B20 /* TodoListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListViewController.swift; sourceTree = "<group>"; };
 		27579713289B89EC00E35B20 /* TodoListHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListHeaderView.swift; sourceTree = "<group>"; };
 		27579715289B8A2000E35B20 /* CheckControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckControl.swift; sourceTree = "<group>"; };
@@ -75,7 +73,7 @@
 		27579719289B8A6000E35B20 /* AddTodoControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTodoControl.swift; sourceTree = "<group>"; };
 		2757971B289B8B6E00E35B20 /* TodoCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoCellViewModel.swift; sourceTree = "<group>"; };
 		2757971F289E53B600E35B20 /* PresentFromCellAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentFromCellAnimator.swift; sourceTree = "<group>"; };
-		275CDB9628B8B14B005464BC /* FileCacheSQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCacheSQL.swift; sourceTree = "<group>"; };
+		275CDB9628B8B14B005464BC /* FileCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCache.swift; sourceTree = "<group>"; };
 		275DD7E528AC74650095288F /* DefaultNetworkingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultNetworkingService.swift; sourceTree = "<group>"; };
 		275DD7EB28B0FA550095288F /* TodoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoService.swift; sourceTree = "<group>"; };
 		275DD7EE28B219760095288F /* AuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewController.swift; sourceTree = "<group>"; };
@@ -146,8 +144,7 @@
 		2751FC1B28958EED004C8C1C /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				2751FC1E28958F5C004C8C1C /* FileCache.swift */,
-				275CDB9628B8B14B005464BC /* FileCacheSQL.swift */,
+				275CDB9628B8B14B005464BC /* FileCache.swift */,
 				278131F928A8F5B900E169AF /* FileCacheService.swift */,
 				278131FB28A9120500E169AF /* NetworkService.swift */,
 				275DD7E528AC74650095288F /* DefaultNetworkingService.swift */,
@@ -401,14 +398,13 @@
 				2751FC0828958BBB004C8C1C /* AppDelegate.swift in Sources */,
 				275DD7E628AC74650095288F /* DefaultNetworkingService.swift in Sources */,
 				27579714289B89EC00E35B20 /* TodoListHeaderView.swift in Sources */,
-				275CDB9728B8B14B005464BC /* FileCacheSQL.swift in Sources */,
+				275CDB9728B8B14B005464BC /* FileCache.swift in Sources */,
 				275DD7EC28B0FA550095288F /* TodoService.swift in Sources */,
 				2717F6F4289FB791003D2AB5 /* TodoItemViewModel.swift in Sources */,
 				27D880CC289A4EC400991016 /* TextViewWithPlaceholder.swift in Sources */,
 				278131FC28A9120500E169AF /* NetworkService.swift in Sources */,
 				27579718289B8A4500E35B20 /* TodoCell.swift in Sources */,
 				27D880D6289A514900991016 /* PriorityView.swift in Sources */,
-				2751FC1F28958F5C004C8C1C /* FileCache.swift in Sources */,
 				275DD7EF28B219760095288F /* AuthViewController.swift in Sources */,
 				2757971C289B8B6E00E35B20 /* TodoCellViewModel.swift in Sources */,
 				27579720289E53B600E35B20 /* PresentFromCellAnimator.swift in Sources */,

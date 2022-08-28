@@ -1,31 +1,13 @@
 //
-//  FileCache.swift
+//  FileCacheSQL.swift
 //  todo-list
 //
-//  Created by Алексей Поляков on 30.07.2022.
+//  Created by Алексей Поляков on 26.08.2022.
 //
 
 import Foundation
+import SQLite
 import TodoLib
-
-// MARK: - Enum
-
-enum FileCacheErrors: LocalizedError {
-    case alreadyExisting(id: String)
-    case invalidJSONFormat
-    case fileAccess
-
-    var errorDescription: String? {
-        switch self {
-        case .alreadyExisting(let id):
-            return "Задача c id \"\(id)\" уже существует"
-        case .invalidJSONFormat:
-            return "Неверный формат JSON"
-        case .fileAccess:
-            return "Проблема доступа в документы приложения"
-        }
-    }
-}
 
 // MARK: - Class
 
@@ -33,102 +15,188 @@ final class FileCache: FileCacheService {
 
     // MARK: - Properties
 
+    private let queue = DispatchQueue(label: "FileCacheQueue")
+
     private (set) var todoItems: [TodoItem] = []
 
-    // MARK: - Public functions
+    private let id = Expression<String>("id")
+    private let text = Expression<String>("text")
+    private let priority = Expression<String>("priority")
+    private let deadline = Expression<Date?>("deadline")
+    private let done = Expression<Bool>("done")
+    private let dateCreate = Expression<Date>("dateCreate")
+    private let dateEdit = Expression<Date?>("dateEdit")
+    private let todoItemsTable = Table("TodoItems")
 
-    func addTodoItem(todoItem: TodoItem) {
-        guard !todoItems.contains(where: { $0.id == todoItem.id }) else { return }
+    private var dbUrl: URL? {
+        guard let documentDirectory = FileManager.default.urls(for: .documentDirectory,
+                                                               in: .userDomainMask).first else {
+            return nil
+        }
+        let path = documentDirectory.appendingPathComponent("todoItems.sqlite3")
+        return path
+    }
+
+    // MARK: - Init
+
+    public init() {
+        do {
+            try createTables()
+        } catch let error {
+            print("\(error)")
+        }
+    }
+
+    // MARK: - Public Functions
+
+    func load(completion: @escaping (Swift.Result<[TodoItem], Error>) -> Void) {
+        queue.async { [weak self] in
+            guard let self = self else { return }
+            do {
+                try self.getItems()
+                completion(.success(self.todoItems))
+            } catch let error {
+                completion(.failure(error))
+            }
+        }
+    }
+
+    func save(items: [TodoItem], completion: @escaping (Swift.Result<[TodoItem], Error>) -> Void) {
+        queue.async { [weak self] in
+            do {
+                try self?.saveToDatabase(items) { items in
+                    completion(.success(items))
+                }
+            } catch let error {
+                completion(.failure(error))
+            }
+        }
+    }
+
+    func create(_ item: TodoItem, completion: @escaping (Swift.Result<TodoItem, Error>) -> Void) {
+        queue.async { [weak self] in
+            guard let self = self else { return }
+            do {
+                try self.createToDatabase(item)
+                completion(.success(item))
+            } catch let error {
+                completion(.failure(error))
+            }
+        }
+    }
+
+    func update(_ item: TodoItem, completion: @escaping (Swift.Result<TodoItem, Error>) -> Void) {
+        queue.async { [weak self] in
+            guard let self = self else { return }
+            do {
+                try self.updateToDatabase(item)
+                completion(.success(item))
+            } catch let error {
+                completion(.failure(error))
+            }
+        }
+    }
+
+    func delete(_ id: String, completion: @escaping (Swift.Result<Void, Error>) -> Void) {
+        queue.async { [weak self] in
+            guard let self = self else { return }
+            do {
+                try self.deleteFromDatabase(id)
+                completion(.success(()))
+            } catch let error {
+                completion(.failure(error))
+            }
+        }
+    }
+
+    // MARK: - Private Functions
+
+    private func createTables() throws {
+        guard let dbUrl = dbUrl else { return }
+        FileManager.createFileIfNotExists(with: dbUrl)
+        let connection = try Connection(dbUrl.path)
+        try connection.run(todoItemsTable.create(ifNotExists: true) { table in
+            table.column(id, primaryKey: true)
+            table.column(text)
+            table.column(priority)
+            table.column(deadline)
+            table.column(done)
+            table.column(dateCreate)
+            table.column(dateEdit)
+        })
+    }
+
+    private func getItems() throws {
+        guard let dbUrl = dbUrl else { return }
+        todoItems.removeAll()
+        let connection = try Connection(dbUrl.path)
+        for row in try connection.prepare(todoItemsTable) {
+            if let todoItem = TodoItem.parseSQL(row: row) {
+                todoItems.append(todoItem)
+            }
+        }
+    }
+
+    private func saveToDatabase(_ items: [TodoItem], completion: ([TodoItem]) -> Void) throws {
+        guard let dbUrl = dbUrl else { return }
+
+        try getItems()
+
+        let itemsIds = items.map({$0.id})
+        let dbItemsIds = todoItems.map({$0.id})
+        let itemsToDelete = todoItemsTable.filter(!itemsIds.contains(id))
+        let itemsToCreate = items.filter({!dbItemsIds.contains($0.id)})
+        let itemsToUpdate = items.filter({dbItemsIds.contains($0.id)})
+
+        let connection = try Connection(dbUrl.path)
+        try connection.run(itemsToDelete.delete())
+
+        for item in itemsToCreate {
+            try createToDatabase(item)
+        }
+        for item in itemsToUpdate {
+            try updateToDatabase(item)
+        }
+        todoItems = items
+        completion(items)
+    }
+
+    private func createToDatabase(_ todoItem: TodoItem) throws {
+        guard let dbUrl = dbUrl else { return }
+        let connection = try Connection(dbUrl.path)
+        try connection.run(todoItem.sqlInsertStatement)
         todoItems.append(todoItem)
     }
 
-    @discardableResult
-    func removeTodoItem(id: String) -> TodoItem? {
-        if let deletedTodo = todoItems.first(where: { $0.id == id }) {
-            todoItems.removeAll(where: { $0.id == id })
-            return deletedTodo
-        } else {
-            return nil
+    private func updateToDatabase(_ todoItem: TodoItem) throws {
+        guard let dbUrl = dbUrl else { return }
+        let connection = try Connection(dbUrl.path)
+        let updatedTodoItem = todoItemsTable.filter(id == todoItem.id)
+        try connection.run(updatedTodoItem.update(text <- todoItem.text,
+                                                  priority <- todoItem.priority.rawValue,
+                                                  deadline <- todoItem.deadline,
+                                                  done <- todoItem.done,
+                                                  dateEdit <- todoItem.dateEdit))
+        todoItems.removeAll(where: { $0.id == todoItem.id })
+        todoItems.append(todoItem)
+    }
+
+    private func deleteFromDatabase(_ id: String) throws {
+        guard let dbUrl = dbUrl else { return }
+        let connection = try Connection(dbUrl.path)
+        let todoItem = todoItemsTable.filter(self.id == id)
+        try connection.run(todoItem.delete())
+        todoItems.removeAll(where: { $0.id == id })
+    }
+}
+
+// MARK: - Extension
+
+extension FileManager {
+    static public func createFileIfNotExists(with path: URL) {
+        let fileManager = FileManager.default
+        if !fileManager.fileExists(atPath: path.path) {
+            fileManager.createFile(atPath: path.path, contents: nil, attributes: nil)
         }
-    }
-
-    func removeAll() {
-        todoItems.removeAll()
-    }
-
-    func saveFile(to fileName: String, completion: @escaping (Result<Void, Error>) -> Void) {
-
-        DispatchQueue.global().async(qos: .background) { [weak self] in
-
-            guard let self = self else { return }
-            let itemsDictArray = self.todoItems.map { $0.json }
-
-            guard let fileURL = self.getFileURL(by: fileName) else {
-                DispatchQueue.main.async {
-                    completion(.failure(FileCacheErrors.fileAccess))
-                }
-                return
-            }
-            do {
-                try JSONSerialization.data(withJSONObject: itemsDictArray, options: []).write(to: fileURL)
-                DispatchQueue.main.async {
-                    completion(.success(()))
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    completion(.failure(FileCacheErrors.invalidJSONFormat))
-                }
-            }
-        }
-    }
-
-    func loadFile(from fileName: String, completion: @escaping (Result<[TodoItem], Error>) -> Void) {
-
-        DispatchQueue.global().async(qos: .background) { [weak self] in
-
-            guard let self = self else { return }
-            guard let fileURL = self.getFileURL(by: fileName) else {
-                DispatchQueue.main.async {
-                    completion(.failure(FileCacheErrors.fileAccess))
-                }
-                return
-            }
-            do {
-                let fileData = try Data(contentsOf: fileURL)
-                let itemsArray = try JSONSerialization.jsonObject(with: fileData, options: [])
-
-                guard let itemsArray = itemsArray as? [Any] else {
-                    DispatchQueue.main.async {
-                        completion(.failure(FileCacheErrors.invalidJSONFormat))
-                    }
-                    return
-                }
-
-                self.todoItems.removeAll()
-                self.todoItems = itemsArray.compactMap { TodoItem.parse(json: $0) }
-
-                DispatchQueue.main.async {
-                    completion(.success((self.todoItems)))
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    completion(.failure(FileCacheErrors.invalidJSONFormat))
-                }
-            }
-        }
-    }
-
-    func deleteFile(fileName: String) throws {
-        guard let fileURL = getFileURL(by: fileName) else { throw FileCacheErrors.fileAccess }
-        try FileManager.default.removeItem(atPath: fileURL.path)
-    }
-
-    // MARK: - Private functions
-
-    private func getFileURL(by name: String) -> URL? {
-        return FileManager.default
-            .urls(for: .documentDirectory, in: .userDomainMask)
-            .first?
-            .appendingPathComponent(name, isDirectory: false)
     }
 }

@@ -84,18 +84,6 @@ final class TodoListViewController: UIViewController {
                 self.stopAnimatingActivityIndicator()
             }
         }
-
-        let newFileCache = FileCacheSQL()
-
-        do {
-            // try newFileCache.create(TodoItem(text: "Proba"))
-             try newFileCache.load()
-        } catch {
-
-        }
-
-        print(newFileCache.todoItems)
-
     }
 
     // MARK: - UI
